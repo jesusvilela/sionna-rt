@@ -17,6 +17,7 @@ from sionna.rt.path_solvers.field_calculator import FieldCalculator
 from sionna.rt.path_solvers.image_method import ImageMethod
 from sionna.rt.path_solvers.paths import Paths
 from sionna.rt.path_solvers.paths_buffer import PathsBuffer
+from sionna.rt.utils.misc import check_mitsuba_variant
 from sionna.rt.path_solvers.sb_candidate_generator import SBCandidateGenerator
 from sionna.rt.path_solvers.sb_deterministic import \
     SBDeterministicCandidateGenerator
@@ -215,6 +216,8 @@ class RCSSolver:
         """
 
         # Validate public arguments before any allocation or sampling
+        # Ensure the configured Mitsuba variant is supported by Sionna RT
+        check_mitsuba_variant()
         if not isinstance(scene, Scene):
             raise TypeError("`scene` must be an instance of Scene")
         if isinstance(max_depth, bool) or not isinstance(max_depth, Integral):
