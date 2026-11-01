@@ -7,7 +7,11 @@
 import pytest
 import mitsuba as mi
 
-from sionna.rt import load_scene, PlanarArray, Transmitter, Receiver, PathSolver
+from sionna.rt import (
+    load_scene, PlanarArray, Transmitter, Receiver,
+    PathSolver, RadioMapSolver,
+)
+from sionna.rt.rcs import RCSSolver
 from sionna.rt.utils.misc import check_mitsuba_variant
 
 
@@ -48,8 +52,12 @@ def test_check_mitsuba_variant_accepts_polarized():
             mi.set_variant(original)
 
 
-def test_path_solver_clear_error_on_wrong_variant():
-    """PathSolver fails fast with a clear error when the variant is wrong"""
+@pytest.mark.parametrize(
+    "solver_type,max_depth",
+    [(PathSolver, 0), (RCSSolver, 1), (RadioMapSolver, 0)],
+)
+def test_solver_clear_error_on_wrong_variant(solver_type, max_depth):
+    """Every solver fails fast with actionable variant configuration guidance"""
     original = mi.variant()
     unsupported = _unsupported_variant()
     if unsupported is None or original is None:
@@ -61,9 +69,20 @@ def test_path_solver_clear_error_on_wrong_variant():
                                  pattern="iso", polarization="V")
     scene.add(Transmitter("tx", position=[0.0, 0.0, 20.0]))
     scene.add(Receiver("rx", position=[30.0, 0.0, 1.5]))
+    solver = solver_type()
     try:
         mi.set_variant(unsupported)
-        with pytest.raises(RuntimeError, match="mono_polarized"):
-            PathSolver()(scene, max_depth=0)
+        with pytest.raises(RuntimeError, match="mono_polarized") as exc_info:
+            solver(scene, max_depth=max_depth)
+        message = str(exc_info.value)
+        assert unsupported in message
+        assert "mitsuba.set_variant()" in message
     finally:
         mi.set_variant(original)
+
+
+@pytest.mark.parametrize("solver_type", [PathSolver, RCSSolver, RadioMapSolver])
+def test_solver_preserves_validation_on_supported_variant(solver_type):
+    """The variant guard leaves existing public argument validation intact"""
+    with pytest.raises(TypeError, match="`scene` must be an instance of Scene"):
+        solver_type()(None)
