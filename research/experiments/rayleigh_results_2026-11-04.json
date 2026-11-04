@@ -1,0 +1,126 @@
+{
+  "H_normalization": "H_ij~CN(0,1/r), r=2",
+  "codebook_source": "NVlabs/sionna-rt PR #82 head 57435845d3395b2d5e167b0893035e15ffbdaa0d",
+  "known_answer_detector": {
+    "estimated": 0.02375,
+    "exact": 0.02460825793286192,
+    "six_sigma_tolerance": 0.00318343203236294
+  },
+  "noise_model": "proper complex CN(0,N0 I_2)",
+  "num_channels": 512,
+  "protocol": "PRE_REG_2026-11-04.txt",
+  "runs": {
+    "isotropic_rayleigh_N0_0.04": {
+      "N0": 0.04,
+      "paired_diff_rank1_minus_off_cone": {
+        "bootstrap_channels": 2000,
+        "ci95": [
+          -0.0015264511108398437,
+          0.00490570068359375
+        ],
+        "delta": 0.0016632080078125
+      },
+      "paired_diff_rank1_minus_qpsk2": {
+        "bootstrap_channels": 2000,
+        "ci95": [
+          0.014723587036132812,
+          0.02365894317626953
+        ],
+        "delta": 0.01918792724609375
+      },
+      "regime": "isotropic_rayleigh",
+      "sers": {
+        "off_cone_twin": 0.081878662109375,
+        "qpsk2": 0.06435394287109375,
+        "rank1": 0.0835418701171875
+      },
+      "unclipped_averaged_union_bounds": {
+        "off_cone_twin": 0.09510436718154393,
+        "qpsk2": 0.078951310887359,
+        "rank1": 0.09510436718154393
+      }
+    },
+    "isotropic_rayleigh_N0_0.08": {
+      "N0": 0.08,
+      "paired_diff_rank1_minus_off_cone": {
+        "bootstrap_channels": 2000,
+        "ci95": [
+          -0.0038076400756835937,
+          0.00372333526611328
+        ],
+        "delta": 3.0517578125e-05
+      },
+      "paired_diff_rank1_minus_qpsk2": {
+        "bootstrap_channels": 2000,
+        "ci95": [
+          0.025466156005859376,
+          0.03568286895751953
+        ],
+        "delta": 0.03049468994140625
+      },
+      "regime": "isotropic_rayleigh",
+      "sers": {
+        "off_cone_twin": 0.18988037109375,
+        "qpsk2": 0.15941619873046875,
+        "rank1": 0.189910888671875
+      },
+      "unclipped_averaged_union_bounds": {
+        "off_cone_twin": 0.26242135092855406,
+        "qpsk2": 0.23430559203599152,
+        "rank1": 0.26242135092855406
+      }
+    },
+    "rotated_anisotropic_N0_0.04": {
+      "N0": 0.04,
+      "paired_diff_rank1_minus_off_cone": {
+        "bootstrap_channels": 2000,
+        "ci95": [
+          -0.008172035217285156,
+          -0.00142669677734375
+        ],
+        "delta": -0.0048980712890625
+      },
+      "paired_diff_rank1_minus_qpsk2": {
+        "bootstrap_channels": 2000,
+        "ci95": [
+          0.020095634460449218,
+          0.02844276428222656
+        ],
+        "delta": 0.02435302734375
+      },
+      "regime": "rotated_anisotropic",
+      "sers": {
+        "off_cone_twin": 0.11827850341796875,
+        "qpsk2": 0.08902740478515625,
+        "rank1": 0.11338043212890625
+      }
+    },
+    "rotated_anisotropic_N0_0.08": {
+      "N0": 0.08,
+      "paired_diff_rank1_minus_off_cone": {
+        "bootstrap_channels": 2000,
+        "ci95": [
+          -0.0018466949462890626,
+          0.00487518310546875
+        ],
+        "delta": 0.0013580322265625
+      },
+      "paired_diff_rank1_minus_qpsk2": {
+        "bootstrap_channels": 2000,
+        "ci95": [
+          0.03147869110107422,
+          0.04199256896972656
+        ],
+        "delta": 0.036712646484375
+      },
+      "regime": "rotated_anisotropic",
+      "sers": {
+        "off_cone_twin": 0.27568817138671875,
+        "qpsk2": 0.24033355712890625,
+        "rank1": 0.27704620361328125
+      }
+    }
+  },
+  "seed": 74283,
+  "symbols_per_channel": 256
+}
