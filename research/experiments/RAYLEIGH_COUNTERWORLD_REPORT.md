@@ -139,16 +139,33 @@ The new metamorphic regression takes each base H and its four-channel cyclic orb
 
 With identical transmitted indices and noise draws at each member, its *aggregate* rank-one error count agrees exactly with the aggregate off-cone count, because the twin shifts the orbit index by one. This verifies the machinery without statistical approximations; these orbit members are deliberately dependent and are **not** counted as independent confidence-interval samples.
 
+### A stronger stop theorem: full Gram sufficiency for coherent white-noise ML [P]
+
+For a **fixed** codebook C and proper white complex Gaussian noise CN(0,N0 I_r), the entire conditional ML error law depends on a known channel H only through its **full Hermitian Gram matrix**
+
+    G = H†H.
+
+If H1†H1 = H2†H2, the mapping H1x → H2x preserves all complex inner products for x in C²; by extending this isometry on the received column subspace, there is a receive-side unitary V with H2=V H1 (when the output dimensions coincide; zero extra dimensions are immaterial). Circular white Gaussian noise is invariant under V, and the full list of ML squared distances is unchanged under y→Vy. Consequently
+
+    SER(C,H1,N0) = SER(C,H2,N0).
+
+**The full Gram matrix is sufficient, but its two eigenvalues alone generally are not:** the input eigenvectors encode the orientation of the channel metric relative to the fixed constellation. This is exactly where our earlier right-rotated anisotropic counterworld acts.
+
+This imposes a genuine anti-overclaim gate: **no novel channel-geometric feature can add predictive information about conditional symbol error beyond full G in this memoryless coherent white-noise model.** A feature can still improve computation or compress G, and additional information may matter under time-correlated paths, unknown CSI, frequency selectivity, non-Gaussian noise or decision rules outside the current model. Those are *different typed problems*, not an escape from sufficiency.
+
+For known colored proper Gaussian noise with positive-definite covariance Σ, the corresponding sufficient metric is the **whitened Gram** G_Σ=H†Σ⁻¹H. Ordinary G alone is then insufficient: H1=I and H2=the two-coordinate swap have equal unweighted Gram, yet for Σ=diag(0.01,1) a codeword difference along input e1 has whitened squared distances 100 and 1, respectively. Four new CPU tests reproduce covariance, rank-deficiency, singular-value insufficiency, and this non-white counterexample.
+
 ## 6. Reproduction and evidence ledger
 
 From repository root:
 
     python research/experiments/rayleigh_counterworld.py
     python -m unittest discover -s research/tests -p 'test_rayleigh_counterworld.py' -v
+    python -m unittest discover -s research/tests -p 'test_gram_sufficiency.py' -v
 
-The first command writes the result JSON next to the script. **This execution passed the prespecified known-answer check and produced all four results. All 7/7 deterministic CPU tests pass**, including an independently evaluated Craig integral, exact spectra, high-SNR coefficients, source-codebook normalization, and a group-orbit metamorphic check. Source/test/result/prereg files were all confirmed identical to the locally executed/created versions by Git blob SHA, not filename similarity.
+The first command writes the result JSON next to the script. **This execution passed the prespecified known-answer check and produced all four results. All 11/11 deterministic CPU tests pass**, including an independently evaluated Craig integral, exact spectra, high-SNR coefficients, source-codebook normalization, and a group-orbit metamorphic check. Source/test/result/prereg files were all confirmed identical to the locally executed/created versions by Git blob SHA, not filename similarity.
 
-- **P:** exact Rayleigh PEP integral, diversity order r under stated assumptions, distance-spectrum enumerations, off-cone expected SER symmetry.
+- **P:** exact Rayleigh PEP integral, diversity order r under stated assumptions, distance-spectrum enumerations, off-cone expected SER symmetry, full coherent-AWGN Gram sufficiency.
 - **M:** the four frozen synthetic-ensemble Monte Carlo outcomes, their channel-cluster intervals, and the detector checks.
 - **H:** geometric or codebook features predicting source-matched, held-out ray-traced performance better than simpler channel spectral features; untested here.
 - **R:** the previously retired claim that the fixed null-cone determinant uniquely *causes* the earlier Sionna SER advantage.
@@ -158,6 +175,6 @@ Classical foundations: Craig-formula averaged pairwise error, coding gain and di
 
 ### Next gate, not executed
 
-The load-bearing missing bridge is **the actual held-out Sionna ray-traced H distribution**. To support a physical-channel mechanism, obtain a reproducible, versioned H sample from the existing notebook, freeze its scene/channel sampling protocol, and compare QPSK², rank-one, off-cone twin and an equally optimized unconstrained 16-symbol control on held-out matrices, all under matched compute, power, CSI, noise, symbol priors, seeds, and per-scene uncertainty. The primary test is out-of-sample SER and **incremental predictive value** of geometric features over standard Gram/eigenvalue/distance features. Retire any proposed special-geometry causal interpretation if the unconstrained matched control equals or exceeds it. Do not start a GPU job or upstream PR without that gate.
+The load-bearing missing bridge is **the actual held-out Sionna ray-traced H distribution**. To support a physical-channel mechanism, obtain a reproducible, versioned H sample from the existing notebook, freeze its scene/channel sampling protocol, and compare QPSK², rank-one, off-cone twin and an equally optimized unconstrained 16-symbol control on held-out matrices, all under matched compute, power, CSI, noise, symbol priors, seeds, and per-scene uncertainty. The primary test is out-of-sample SER and whether parsimonious geometric features improve prediction over **restricted summaries of G** (eigenvalues and scalar distance statistics), not over the **full G**, which already determines coherent white-AWGN SER under the stated assumptions. To claim information absent from full G, first define and measure a richer observable (time/frequency/channel-estimation dynamics or non-white noise) that violates the one-shot model's sufficiency hypotheses. Retire any proposed special-geometry causal interpretation if the unconstrained matched control equals or exceeds it. Do not start a GPU job or upstream PR without that gate.
 
 **Authorship:** human-led geometric research direction and evidence constraints; this reconstruction, synthetic experiment implementation, theorem proof and write-up are AI-assisted. No claim of independent human mathematical review.
