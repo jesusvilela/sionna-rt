@@ -69,7 +69,7 @@ Their nonnegative-coordinate Pareto frontier is exactly
 (0,2),\quad(a,\tfrac12),\quad(\tfrac12,a),\quad(2,0).
 \]
 
-For `0≤η≤1` the last two are never better than the first two respectively. QPSK² has scalar coordinate pair differences `0,1,2`, and its smallest nonzero received squared distance is `η`. Thus:
+For `0≤η≤1` the last two are never better than the first two respectively. QPSK² has scalar coordinate pair differences `0,1,2`, and its minimum received squared distance between distinct transmitted symbols (possibly zero when η=0) is `η`. Thus:
 
 \[
 \boxed{
