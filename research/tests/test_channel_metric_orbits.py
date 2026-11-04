@@ -208,6 +208,30 @@ class ChannelOrbitTests(unittest.TestCase):
             four_phase_representatives(np.zeros((16,2),complex))
 
 
+    def test_singular_values_do_not_determine_codebook_ranking(self):
+        # A right-side input-polarization rotation changes the relative
+        # orientation of the physical channel and fixed transmit codebooks.
+        # Its singular values remain unchanged, yet the ranking reverses.
+        eta=0.01
+        diagonal=np.diag([1., np.sqrt(eta)])
+        theta=np.pi/8
+        rotation=np.array([[np.cos(theta),-np.sin(theta)],
+                           [np.sin(theta), np.cos(theta)]])
+        rotated=diagonal@rotation
+        np.testing.assert_allclose(np.linalg.svd(diagonal,compute_uv=False),
+                                   np.linalg.svd(rotated,compute_uv=False),
+                                   atol=1e-14)
+        rank=rank_one_constellation()
+        qpsk=qpsk_squared()
+        r0=brute_min_received_d2(rank,diagonal)
+        q0=brute_min_received_d2(qpsk,diagonal)
+        r1=brute_min_received_d2(rank,rotated)
+        q1=brute_min_received_d2(qpsk,rotated)
+        self.assertGreater(r0,q0)
+        self.assertLess(r1,q1)
+        self.assertAlmostEqual(r1,0.005857864376269049,places=10)
+        self.assertAlmostEqual(q1,0.1549821433126589,places=10)
+
     def test_explicit_off_cone_isometric_twin(self):
         # Change the physical transmitted codebook but hold H fixed.
         # For a diagonal channel, D commutes with H: H D = D H.
