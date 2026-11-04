@@ -93,6 +93,15 @@ d_{\min,H_\eta}^2(C_{\rm QPSK²})
 - `η=0.10`: rank-one `0.135786` vs QPSK² `0.100000`.
 - `η=1`: rank-one `2-\sqrt2≈0.585786` vs QPSK² `1`.
 
+**Orientation counterexample (same singular values, opposite ranking).** The crossover is conditional on alignment of the codebooks with the diagonal channel axes; it is *not* a theorem determined by the singular-value ratio alone. At `eta=0.01`, replace the diagonal channel by `H' = H_eta R(pi/8)`, with `R` a real 2×2 rotation on the input coordinates. Both channels have singular values `(1,0.1)`, but direct finite enumeration gives:
+
+| Channel at `eta=0.01` | Rank-one received `d_min²` | QPSK² received `d_min²` |
+|---|---:|---:|
+| `H_eta` | **0.020000** | 0.010000 |
+| `H_eta R(pi/8)` | 0.005857864 | **0.154982143** |
+
+This is a *physical channel-orientation change with the transmitted codebooks held fixed*, not a compensated frame change. It is an explicit falsifier of any orientation-free interpretation of the `3−2sqrt(2)` crossover. Its values are reproduced by the tenth CPU regression test. The equivalent **amplitude-gain threshold** in the aligned family is `sqrt(eta)<sqrt(2)-1`, not a universal condition-number law.
+
 **Interpretation:** rank-one is better packed *for this metric* when one polarization is sufficiently weak; QPSK² wins for balanced channels. This does not establish that null-cone geometry is the reason or that an arbitrarily sampled ray-traced channel satisfies this criterion.
 
 ## 4. Decisive counterworld — an off-cone isometric twin [P: exact construction]
@@ -121,7 +130,7 @@ The twin is a direct falsifier of any statement that the **original** realified 
 
 ## 5. Executable independent checks
 
-`research/tests/test_channel_metric_orbits.py` contains 9 NumPy/unittest tests of:
+`research/tests/test_channel_metric_orbits.py` contains 10 NumPy/unittest tests of:
 
 - four-orbit partition of **both** actual PR #82 codebook constructors;
 - orbit quotient against a separately written full 16×16 enumeration for zero, rank-deficient, diagonal and random rectangular complex channels;
@@ -137,7 +146,7 @@ Command from repository root (NumPy installed):
 python -m unittest discover -s research/tests -p 'test_*.py' -v
 ```
 
-**Verification in this chat session:** the **9 new tests passed locally** using a local copy of the two codebook constructors from the GitHub source. The 16 earlier tests were *not rerun in the same local container*. NVIDIA CI, ray-traced Sionna tests and the original performance results were not rerun. These numerical checks corroborate, but do not replace, the exact finite derivations above.
+**Verification in this chat session:** the **10 new tests passed locally** using a local copy of the two codebook constructors from the GitHub source. The 16 earlier tests were *not rerun in the same local container*. NVIDIA CI, ray-traced Sionna tests and the original performance results were not rerun. These numerical checks corroborate, but do not replace, the exact finite derivations above.
 
 ## Evidence ledger, novelty boundary and stop rule
 
@@ -146,7 +155,7 @@ python -m unittest discover -s research/tests -p 'test_*.py' -v
 | Four-phase orbit-quotient identity for arbitrary PSD `G` | **P**, elementary algebra | direct orbit-pair expansion |
 | Diagonal channel crossover at `3−2√2` | **P**, finite enumeration | complete distance-pair certificate |
 | Non-null-cone twin with same received distances and Gaussian ML SER in diagonal channel | **P**, conditional analytical identity | `HD=DH` and noise rotational symmetry |
-| 9 new CPU-only regression tests | **M**, local test | NumPy, seeds and checks in test file |
+| 10 new CPU-only regression tests | **M**, local test | NumPy, seeds and checks in test file |
 | PR #82 constellation performance in specific ray-traced ensembles | **M**, previous notebook | no rerun; limited to its setup |
 | Original null-cone determinant is a uniquely causal source of benefit | **R**, retired | earlier matched unconstrained optimization and current off-cone control |
 | Novel information-theoretic law, superior general-purpose modem, new mathematical theorem | **Not established** | do not claim without literature and physical-channel verification |
