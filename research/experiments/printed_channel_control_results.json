@@ -1,0 +1,84 @@
+{
+  "caveat": "printed 8-digit channel only; no full 16-receiver dataset available",
+  "noise_model": "CN(0,N0 I_2)",
+  "noise_variance": 0.01,
+  "printed_precision_cert": {
+    "H_fro_rounding_max": 1.4142135623730952e-08,
+    "lower_error_max": 7.978845608028656e-08,
+    "pep_error_max": 7.978845608028656e-08,
+    "upper_error_max": 1.1968268412042984e-06
+  },
+  "results": {
+    "balanced": {
+      "circular_16psk": {
+        "mean_received_energy": 0.4999999999999998,
+        "mean_tx_port_power": [
+          0.49999999999999994,
+          0.49999999999999994
+        ],
+        "min_squared_distance": 0.07612046748871304,
+        "ser_exact_via_quadrature": 0.05106855952683487,
+        "ser_lower": 0.025534279763417538,
+        "ser_union_upper": 0.05119838899317461
+      },
+      "norm_H_fro": 0.9999999999999999,
+      "qpsk_squared": {
+        "mean_received_energy": 0.4999999999999998,
+        "mean_tx_port_power": [
+          0.49999999999999994,
+          0.49999999999999994
+        ],
+        "min_squared_distance": 0.4999999999999998,
+        "ser_lower": 2.8665157187919645e-07,
+        "ser_union_upper": 1.1466108999055833e-06
+      },
+      "rank_one": {
+        "mean_received_energy": 0.4999999999999999,
+        "mean_tx_port_power": [
+          0.5,
+          0.5
+        ],
+        "min_squared_distance": 0.2928932188134523,
+        "ser_lower": 6.490090751482276e-05,
+        "ser_union_upper": 0.0001298018227169444
+      }
+    },
+    "printed_munich_rx0": {
+      "circular_16psk": {
+        "mean_received_energy": 0.4973473628457301,
+        "mean_tx_port_power": [
+          0.49999999999999994,
+          0.49999999999999994
+        ],
+        "min_squared_distance": 0.07571662752819107,
+        "ser_exact_via_quadrature": 0.051688226653448965,
+        "ser_lower": 0.025844113326724615,
+        "ser_union_upper": 0.05182352183597337
+      },
+      "norm_H_fro": 0.999999961970406,
+      "qpsk_squared": {
+        "mean_received_energy": 0.4999999619704064,
+        "mean_tx_port_power": [
+          0.49999999999999994,
+          0.49999999999999994
+        ],
+        "min_squared_distance": 0.01895099195077509,
+        "ser_lower": 0.16517190571537954,
+        "ser_union_upper": 0.41465776263146537
+      },
+      "rank_one": {
+        "mean_received_energy": 0.4999999619704065,
+        "mean_tx_port_power": [
+          0.5,
+          0.5
+        ],
+        "min_squared_distance": 0.03790198390155019,
+        "ser_lower": 0.06808739425621839,
+        "ser_union_upper": 0.10646272262942524
+      }
+    }
+  },
+  "source": "jesusvilela/sionna-rt@57435845d3395b2d5e167b0893035e15ffbdaa0d:tutorials/Null-Cone-Constellations.ipynb",
+  "strict_balanced_margin": 0.025404477940700592,
+  "strict_printed_margin": 0.016263872420245018
+}
