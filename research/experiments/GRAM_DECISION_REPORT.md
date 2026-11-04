@@ -21,6 +21,10 @@ The exporter never installs Sionna, silently changes hardware variants, modifies
 
 **Cheapest route:** if an old notebook session still contains the `H` variable, save it there with `np.savez_compressed("existing_munich_H.npz",H=H)`, then run the exporter `--mode from-npz`. Otherwise the smallest external action is CPU install of version-pinned Sionna RT/Mitsuba/Dr.Jit followed by one explicitly opted-in CPU regeneration. Computational feasibility and exact CPU-vs-CUDA numerical matching have **not been established**, so we stopped there.
 
+### Source interpretation versus saved notebook output
+
+The executed PR #82 notebook still prints a categorical explanation to the effect that rank-one wins **because** its worst-channel minimum distance is about twice QPSK²'s. That minimum-distance comparison is a recorded diagnostic, **not** a causal proof: the later matched unconstrained-optimizer control retired the unique null-cone mechanism, and even a larger minimum distance need not order the entire finite-noise SER. We preserve the original notebook unchanged as requested and treat that printed text as an unresolved communication/interpretation correction, **not** a new NVIDIA issue or comment.
+
 ## 2. Exact Gram/Stokes predictor [P: elementary algebra]
 
 For a fixed 16-point complex constellation `C`, proper white receiver noise `CN(0,N0 I)` and known 2-by-2 complex H, the **entire conditional ML SER** is determined by `G=H†H` (Gram sufficiency, established in the previous checkpoint).
