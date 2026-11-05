@@ -196,7 +196,12 @@ class GramTests(TestCase):
             archive=Path(tmp)/'channels.npz'
             with self.assertRaises(ValueError):g.evaluate_receiver_npz(archive)
             exp.archive_export(archive,H,np.ones(16,dtype=bool),{'mode':'test-fixture'})
-            output=g.evaluate_receiver_npz(archive)
+            # A structurally valid synthetic fixture is NOT Munich evidence.
+            with self.assertRaisesRegex(ValueError,'synthetic fixture'):
+                g.evaluate_receiver_npz(archive)
+            output=g.evaluate_receiver_npz(archive,allow_synthetic_fixture=True)
+            self.assertEqual(output['status'],'synthetic_fixture_only')
+            self.assertFalse(output['origin_authenticated'])
             self.assertEqual(output['n_receivers'],16)
             self.assertEqual(len(output['receivers']),16)
             self.assertEqual(output['receivers'][15]['y_group'],7)
