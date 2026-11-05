@@ -14,7 +14,7 @@ sys.path.insert(0,str(ROOT/'experiments'))
 import munich_cpu_runner as m
 import gram_boundary_tightening as g
 
-ARCHIVE=Path('/mnt/data/sionna_gram_checkpoint/gram_sweep_2026-11-04.json')
+ARCHIVE=ROOT/'experiments'/'gram_sweep_2026-11-04.json'
 
 class MunichRunnerTests(unittest.TestCase):
     def test_pins_and_cpu_only(self):
@@ -101,7 +101,13 @@ class MunichRunnerTests(unittest.TestCase):
 
 class GramBoundaryTests(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):cls.archive=json.loads(ARCHIVE.read_text())
+    def setUpClass(cls):
+        if ARCHIVE.exists():
+            cls.archive=json.loads(ARCHIVE.read_text())
+        else:
+            # Reproduce source branch's 75-cell sweep deterministically.
+            import gram_decision_sweep as previous_sweep
+            cls.archive=previous_sweep.sweep()
 
     def test_frozen_codebooks_and_equality_with_archived(self):
         C=g.codebooks()
