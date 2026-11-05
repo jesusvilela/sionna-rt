@@ -1,7 +1,7 @@
 {
   "attempts": [
     {
-      "elapsed_wall_seconds": 1.124,
+      "elapsed_wall_seconds": 0.874,
       "exit_code": 1,
       "memory_limit_mib": 4096,
       "mode": "exact_notebook_best_effort",
@@ -11,7 +11,7 @@
       "wall_budget_seconds": 30
     },
     {
-      "elapsed_wall_seconds": 0.939,
+      "elapsed_wall_seconds": 0.837,
       "exit_code": 1,
       "memory_limit_mib": 4096,
       "mode": "deterministic_cpu",
@@ -22,7 +22,7 @@
     }
   ],
   "comparison": {
-    "reason": "both actual channel arrays required",
+    "reason": "both current successful and verified channel arrays required",
     "status": "not_measurable"
   },
   "dependencies_before": {
