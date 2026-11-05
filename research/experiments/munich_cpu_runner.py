@@ -97,17 +97,36 @@ def worker(mode,out_dir):
     if mi.variant()!=CPU_VARIANT:raise AssertionError('CPU variant not selected')
     a,scene=scene_and_paths(rt,mode)
     raw,H,alive=cir_to_channels(a)
-    out_dir=Path(out_dir);out_dir.mkdir(parents=True,exist_ok=True)
-    out=out_dir/f'{mode}.npz'
-    if out.exists():raise FileExistsError(out)
-    np.savez_compressed(out,H=H, H_raw=raw, alive=alive, receiver_positions=receiver_positions())
-    meta={'mode':mode,'config':config(mode),'num_receivers':16,'num_alive':int(alive.sum()),
-          'source_commit':HEAD,'package_pins':dependencies,'CPU_variant':mi.variant(),
-          'scene_frequency_hz':float(scene.frequency), 'cir_shape':list(a.shape),
-          'output':out.name,'sha256':hashlib.sha256(out.read_bytes()).hexdigest(),
+    return save_archive(Path(out_dir)/f'{mode}.npz',raw,H,alive,mode,
+                        dependencies,mi.variant(),float(scene.frequency),list(a.shape))
+
+
+
+def save_archive(out,raw,H,alive,mode,dependencies,cpu_variant,scene_frequency,cir_shape):
+    """Write exact schema accepted by the previous 16-receiver Gram importer."""
+    if cpu_variant != CPU_VARIANT:raise ValueError('non-CPU variant refused')
+    out=Path(out)
+    if out.exists() or out.with_suffix('.manifest.json').exists():
+        raise FileExistsError('refusing to overwrite archive or manifest')
+    H=np.asarray(H,complex);raw=np.asarray(raw,complex);alive=np.asarray(alive,bool)
+    if H.shape!=(16,2,2) or raw.shape!=(16,2,2) or alive.shape!=(16,):
+        raise ValueError('expected 16x2x2 channels and 16 alive flags')
+    if not np.isfinite(H).all() or not np.isfinite(raw).all():raise ValueError('nonfinite channels')
+    if not np.allclose(np.linalg.norm(H[alive],axis=(1,2)),1,atol=5e-7):
+        raise ValueError('alive H must be normalized')
+    out.parent.mkdir(parents=True,exist_ok=True)
+    np.savez_compressed(out,H=H[alive],H_all_normalized=H,H_raw=raw,
+                        alive=alive,rx_positions_xyz_m=receiver_positions(),
+                        tx_position_xyz_m=np.array([8.5,21.,27.]))
+    sha=hashlib.sha256(out.read_bytes()).hexdigest()
+    meta={'mode':mode,'config':config(mode),'num_receiver_positions':16,
+          'num_alive':int(alive.sum()),'all_16_available':bool(alive.all()),
+          'source_commit':HEAD,'package_pins':dependencies,'CPU_variant':cpu_variant,
+          'scene_frequency_hz':scene_frequency,'cir_shape':cir_shape,
+          'output':out.name,'archive_sha256':sha,
           'first_channel_printed_fro_diff':float(np.linalg.norm(H[0]-PRINTED/np.linalg.norm(PRINTED))) if alive[0] else None,
           'provenance':'CPU regeneration, NOT source-original CUDA matrices'}
-    (out_dir/f'{mode}.json').write_text(json.dumps(meta,indent=2,sort_keys=True)+'\n')
+    out.with_suffix('.manifest.json').write_text(json.dumps(meta,indent=2,sort_keys=True)+'\n')
     return meta
 
 
