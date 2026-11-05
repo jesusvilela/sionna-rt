@@ -142,6 +142,27 @@ class MovingFrameTests(unittest.TestCase):
         with self.assertRaises(ValueError):m.field_diagnostics(np.zeros((15,2,2),complex))
         with self.assertRaises(ValueError):m.field_diagnostics(np.ones((16,2,2),complex))
 
+    def test_discrete_stokes_gluing_preserves_full_oriented_boundary(self):
+        self.assertEqual(len(m.oriented_boundary_edges()),16)
+        rng=np.random.default_rng(899)
+        P=[projector(rng.normal(size=2)+1j*rng.normal(size=2)) for _ in range(16)]
+        for _ in range(5):
+            s=m.surface_phase(P)
+            self.assertEqual((s['faces'],len(s['boundary_edges']),s['euler_characteristic']),(14,16,1))
+            self.assertLess(s['gluing_residual'],1e-12)
+            gauges=[random_u2(rng) for _ in range(16)]
+            P2,T=m.reframe(P,gauges)
+            t=m.surface_phase(P2,T)
+            self.assertLess(t['gluing_residual'],1e-12)
+            np.testing.assert_allclose(t['face_product'],s['face_product'],atol=1e-12)
+            P=[projector(rng.normal(size=2)+1j*rng.normal(size=2)) for _ in range(16)]
+
+    def test_surface_abstains_for_orthogonal_rays(self):
+        P=[projector([1,1]) for _ in range(16)]
+        P[0]=projector([1,0]);P[1]=projector([0,1])
+        with self.assertRaisesRegex(ValueError,'zero-overlap'):
+            m.surface_phase(P)
+
     def test_missing_archive_does_not_fabricate_receiver_data(self):
         with tempfile.TemporaryDirectory() as temp:
             path=Path(temp)/'toy.npz';np.savez_compressed(path,H=np.ones((16,2,2),complex))
