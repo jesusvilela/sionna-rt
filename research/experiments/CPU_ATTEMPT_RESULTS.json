@@ -1,0 +1,47 @@
+{
+  "attempts": [
+    {
+      "elapsed_wall_seconds": 1.124,
+      "exit_code": 1,
+      "memory_limit_mib": 4096,
+      "mode": "exact_notebook_best_effort",
+      "output_exists": false,
+      "status": "failed",
+      "stdout_log": "exact_notebook_best_effort.log",
+      "wall_budget_seconds": 30
+    },
+    {
+      "elapsed_wall_seconds": 0.939,
+      "exit_code": 1,
+      "memory_limit_mib": 4096,
+      "mode": "deterministic_cpu",
+      "output_exists": false,
+      "status": "failed",
+      "stdout_log": "deterministic_cpu.log",
+      "wall_budget_seconds": 30
+    }
+  ],
+  "comparison": {
+    "reason": "both actual channel arrays required",
+    "status": "not_measurable"
+  },
+  "dependencies_before": {
+    "drjit": {
+      "installed": false,
+      "version": null
+    },
+    "mitsuba": {
+      "installed": false,
+      "version": null
+    },
+    "sionna-rt": {
+      "installed": false,
+      "version": null
+    }
+  },
+  "requested": [
+    "exact_notebook_best_effort",
+    "deterministic_cpu"
+  ],
+  "source_commit": "57435845d3395b2d5e167b0893035e15ffbdaa0d"
+}
