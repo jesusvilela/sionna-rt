@@ -1,8 +1,8 @@
 # Moving–moving frames: a transported polarization projector field
 
 **Checkpoint:** 5 November 2026 · NVIDIA 6G research fork only · CPU/NumPy · no NVlabs modifications, GPU, HF credits or Work.  
-**Parent:** \`research/munich-cpu-regeneration-boundary-2026-11-05\`  
-**Source:** Sionna RT PR #82 notebook at fork commit \`57435845d3395b2d5e167b0893035e15ffbdaa0d\`.
+**Parent:** `research/munich-cpu-regeneration-boundary-2026-11-05`  
+**Source:** Sionna RT PR #82 notebook at fork commit `57435845d3395b2d5e167b0893035e15ffbdaa0d`.
 
 ## Verdict and evidence classes
 
@@ -131,18 +131,18 @@ The code preserves, when a manifest-verified archive eventually exists:
 - all **29 matrix-valued edge differences**, including trace-free Hermitian entries, not just their norms;
 - all **14 complex triangle invariants**, orientations, magnitudes and phases **or explicit degeneracy/orthogonality abstentions**.
 
-The program requires the prior CPU exporter's \`.manifest.json\` **and** SHA-256-complete \`.npz\`, source commit, 16 alive positions, and correct receiver coordinate ordering. Its default mode runs a clearly labeled synthetic three-ray demonstration and marks **per-receiver real evidence unavailable**. It cannot turn one printed notebook channel into 16 measured ones.
+The program requires the prior CPU exporter's `.manifest.json` **and** SHA-256-complete `.npz`, source commit, 16 alive positions, and correct receiver coordinate ordering. Its default mode runs a clearly labeled synthetic three-ray demonstration and marks **per-receiver real evidence unavailable**. It cannot turn one printed notebook channel into 16 measured ones.
 
 ## 5. Test and adversarial controls
 
 Reproduce from the fork root, with NumPy only:
 
-\`\`\`bash
+```bash
 python -m unittest discover -s research/tests -p 'test_moving_frame.py' -v
 python research/experiments/moving_frame.py
 # only if a verified real archive exists:
 python research/experiments/moving_frame.py --channels-npz path/to/munich_channels.npz --out receiver_moving_frames.json
-\`\`\`
+```
 
 Fourteen tests check:
 
@@ -163,8 +163,8 @@ Fourteen tests check:
 
 The tests are local, AI-authored and correlated with the implementation; exact algebra and adversarial metamorphic witnesses are more substantial than a pass count alone.
 
-**Local Git-blob SHA-1 of tested source:** \`952d7d318cde497efec83d2c668aa2ff5b19bcd7\`.  
-**Local Git-blob SHA-1 of tested tests:** \`d95fb4de4b1c13cf56634f7d5d206c3ca0e500f2\`.  
+**Local Git-blob SHA-1 of tested source:** `952d7d318cde497efec83d2c668aa2ff5b19bcd7`.  
+**Local Git-blob SHA-1 of tested tests:** `d95fb4de4b1c13cf56634f7d5d206c3ca0e500f2`.  
 Both have been compared against fetched GitHub file blobs.
 
 ## 6. Boundary of scientific meaning / next smallest discriminating step
