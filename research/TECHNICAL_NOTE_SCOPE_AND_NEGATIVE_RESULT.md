@@ -19,9 +19,7 @@ Its first input-polarization column contributes approximately **98.1% of total s
 
 For equal-prior, perfect-CSI coherent detection with circular white complex AWGN of variance `N0=0.01`, fix three 16-symbol, per-symbol unit-energy codebooks: original rank-one/null-cone, original QPSK-squared, and a simple fixed *off-null-cone* circular 16-PSK,
 
-[
-x_k = e^{2pi i k/16}(1,i)/sqrt{2}, qquad k=0,ldots,15.
-]
+`x_k = exp(2*pi*i*k/16) * (1,i)/sqrt(2)`, for `k=0,...,15`.
 
 All three average **half the transmit power on each port**; the circular book has `Im(conj(x1)*x2)=1/2`, not zero. This is a matched *average-port-power* control, not a claim of matched RF implementation or CSI overhead.
 
