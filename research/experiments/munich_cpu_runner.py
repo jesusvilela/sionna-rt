@@ -122,6 +122,7 @@ def save_archive(out,raw,H,alive,mode,dependencies,cpu_variant,scene_frequency,c
     meta={'mode':mode,'config':config(mode),'num_receiver_positions':16,
           'num_alive':int(alive.sum()),'all_16_available':bool(alive.all()),
           'source_commit':HEAD,'package_pins':dependencies,'CPU_variant':cpu_variant,
+          'frame_contract':'transmitter_VH_shared_port_basis',
           'scene_frequency_hz':scene_frequency,'cir_shape':cir_shape,
           'output':out.name,'archive_sha256':sha,
           'first_channel_printed_fro_diff':float(np.linalg.norm(H[0]-PRINTED/np.linalg.norm(PRINTED))) if alive[0] else None,
