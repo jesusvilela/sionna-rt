@@ -1,0 +1,102 @@
+{
+  "actual_16_matrices_present": false,
+  "cpu_only": true,
+  "download_attempt": "pip failed pypi.org DNS",
+  "input_sha256": "16ad7ca1eda73d9c6a73776555be2f93333d248ad44d11a32ac9be3b05d2f4c6",
+  "sionna_pin": "2.2.0",
+  "source_commit": "57435845d3395b2d5e167b0893035e15ffbdaa0d",
+  "status": "blocked_by_dns_missing_sionna_rt",
+  "summary": {
+    "circular_16psk": {
+      "conflict": 0,
+      "finite_vs_high_snr_disagreement": 4,
+      "high_snr_A": 45,
+      "high_snr_B": 30,
+      "high_snr_equal_or_unresolved": 0,
+      "new": {
+        "A": 49,
+        "B": 18,
+        "undecided": 8
+      },
+      "newly_decided": 4,
+      "old": {
+        "A": 45,
+        "B": 18,
+        "undecided": 12
+      }
+    },
+    "eigen_psk16_oracle": {
+      "conflict": 0,
+      "finite_vs_high_snr_disagreement": 0,
+      "high_snr_A": 0,
+      "high_snr_B": 0,
+      "high_snr_equal_or_unresolved": 0,
+      "new": {
+        "A": 45,
+        "B": 30,
+        "undecided": 0
+      },
+      "newly_decided": 12,
+      "old": {
+        "A": 33,
+        "B": 30,
+        "undecided": 12
+      }
+    },
+    "eigen_qam16_oracle": {
+      "conflict": 0,
+      "finite_vs_high_snr_disagreement": 0,
+      "high_snr_A": 0,
+      "high_snr_B": 0,
+      "high_snr_equal_or_unresolved": 0,
+      "new": {
+        "A": 16,
+        "B": 59,
+        "undecided": 0
+      },
+      "newly_decided": 1,
+      "old": {
+        "A": 15,
+        "B": 59,
+        "undecided": 1
+      }
+    },
+    "equal_port_psk16_oracle": {
+      "conflict": 0,
+      "finite_vs_high_snr_disagreement": 0,
+      "high_snr_A": 0,
+      "high_snr_B": 0,
+      "high_snr_equal_or_unresolved": 0,
+      "new": {
+        "A": 45,
+        "B": 24,
+        "undecided": 6
+      },
+      "newly_decided": 2,
+      "old": {
+        "A": 43,
+        "B": 24,
+        "undecided": 8
+      }
+    },
+    "qpsk_squared": {
+      "conflict": 0,
+      "finite_vs_high_snr_disagreement": 0,
+      "high_snr_A": 18,
+      "high_snr_B": 50,
+      "high_snr_equal_or_unresolved": 7,
+      "new": {
+        "A": 18,
+        "B": 46,
+        "undecided": 11
+      },
+      "newly_decided": 0,
+      "old": {
+        "A": 18,
+        "B": 46,
+        "undecided": 11
+      }
+    }
+  },
+  "tighten_grid": 75
+}
