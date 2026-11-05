@@ -54,6 +54,18 @@ The classical invariant `B_ijk=tr(P_i P_j P_k)` is mathematically legitimate. We
 
 Important diagnostic: training triangles had near-zero imaginary B, while held-out triangles had `|Im B|≈0.1768`. A fixed standardizer amplified this out-of-support extrapolation. Do **not** present the magnitude of deterioration as evidence that B is universally harmful, and do **not** reselect the split after seeing it. More fundamentally, the baseline's three anchored overlaps reconstruct each local principal projector; with eigenvalue ratio and fixed trace, it reconstructs full local G. The per-site SER-bound target is *already fixed by local G*. B carries no **additional conditional information** for this model and target, regardless of learner.
 
+## One-command-at-a-time reproduction
+
+The [frozen protocol](./PREREG_BARGMANN_ABLATION_2026-11-05.md) was committed before the first fit. The source grid and ablation are deterministic on Python 3.13.5, NumPy 2.3.5, scikit-learn 1.8.0 (plus SciPy for the preexisting Gram sweep):
+
+```bash
+python research/experiments/gram_decision_sweep.py --out gram_sweep_2026-11-04.json
+python research/experiments/bargmann_ablation.py --source gram_sweep_2026-11-04.json --out bargmann_ablation_results.json
+python -m unittest discover -s research/tests -p 'test_bargmann_ablation.py' -v
+```
+
+The [negative-result ledger](./ABLATION_OUTCOME_2026-11-05.json) preserves source/result SHA-256 hashes and the frozen decision threshold. Seven structural/metamorphic regression tests pass; they are self-authored, not independent scientific replication. These scripts create no physical channel data.
+
 ## Evidence boundary and smallest next action
 
 **Proved under model:** Gaussian pairwise bounds, printed-channel conditional ordering, full-Gram sufficiency; **measured in synthetic data:** 75-case classifications and one frozen held-out ablation; **known prior mathematics:** Pancharatnam/Bargmann phases; **open:** actual 16 Munich receivers, external propagation generalization and fair optimized-baseline testing; **retired:** determinant's unique causal performance role, and a demonstrated Bargmann engineering advantage for the synthetic per-site decision.
