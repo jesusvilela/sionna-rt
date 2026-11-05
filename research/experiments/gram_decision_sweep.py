@@ -15,6 +15,7 @@ from pathlib import Path
 
 import numpy as np
 from scipy.special import erfc
+from munich_provenance_gate import load_munich_archive, receiver_positions as source_receiver_positions
 
 NOISE_N0 = 0.01
 RATIOS = (0.01, 0.03, 0.10, 0.35, 1.00)  # positive-definite only: avoids tie ambiguity
@@ -240,25 +241,18 @@ def sweep() -> dict:
             'n_cases':len(cases),'summary':summaries,'cases':cases}
 
 
-def evaluate_receiver_npz(path: Path, N0: float = NOISE_N0) -> dict:
-    """Only use all 16 source-order channels from exporter plus matching manifest."""
-    path=Path(path)
-    manifest_path=path.with_suffix('.manifest.json')
-    if not manifest_path.is_file():
-        raise ValueError('receiver NPZ requires exporter .manifest.json provenance')
-    meta=json.loads(manifest_path.read_text(encoding='utf-8'))
-    if meta.get('source_commit') != SOURCE_COMMIT or meta.get('num_receiver_positions')!=16 or not meta.get('all_16_available'):
-        raise ValueError('source/receiver count/provenance mismatch')
-    if hashlib.sha256(path.read_bytes()).hexdigest() != meta.get('archive_sha256'):
-        raise ValueError('archive SHA256 mismatches provenance manifest')
-    with np.load(path,allow_pickle=False) as p:
-        H=np.asarray(p['H_all_normalized'],complex)
-        alive=np.asarray(p['alive'],bool)
-        pos=np.asarray(p['rx_positions_xyz_m'],float)
-    if H.shape!=(16,2,2) or pos.shape!=(16,3) or not alive.all():
-        raise ValueError('not 16 alive 2x2 channels in original ordering')
-    if not np.isfinite(H).all() or not np.allclose(np.linalg.norm(H,axis=(1,2)),1.,atol=5e-7):
-        raise ValueError('invalid or unnormalized H data')
+def evaluate_receiver_npz(path: Path, N0: float = NOISE_N0, *,
+                          allow_synthetic_fixture: bool = False,
+                          allow_unverified_import: bool = False) -> dict:
+    """Evaluate only structurally checked channels; NEVER promote origin from hashes.
+
+    Source-scene metadata is a declaration by the archive creator, not
+    independent evidence of a physical or ray-traced Munich observation.
+    """
+    H, meta, assessment = load_munich_archive(
+        path, allow_synthetic_fixture=allow_synthetic_fixture,
+        allow_unverified_import=allow_unverified_import)
+    pos = source_receiver_positions()
     data=[]
     for idx,h in enumerate(H):
         e=evaluate_gram(h.conj().T@h,N0)
@@ -266,15 +260,20 @@ def evaluate_receiver_npz(path: Path, N0: float = NOISE_N0) -> dict:
         e['rx_xyz_m']=pos[idx].tolist()
         e['y_group']=int(idx//2)
         data.append(e)
-    return {'status':'evaluated', 'archive':path.name,
-            'archive_sha256':meta['archive_sha256'], 'source_commit':SOURCE_COMMIT,
+    return {'status':assessment['classification'],
+            'origin_authenticated':False,
+            'provenance':assessment,
+            'archive':Path(path).name,
+            'archive_sha256':meta['archive_sha256'],
+            'source_commit':SOURCE_COMMIT,
             'n_receivers':len(data),'receivers':data}
 
 
 def main(argv: list[str] | None = None) -> None:
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out',type=Path,default=Path('gram_sweep_2026-11-04.json'))
-    parser.add_argument('--channels-npz',type=Path,help='optional verified 16-channel exporter archive')
+    parser.add_argument('--channels-npz',type=Path,help='source-structured archive, diagnostics only')
+    parser.add_argument('--allow-unverified-import',action='store_true',help='permit a manually imported NPZ for diagnostic calculations only')
     args=parser.parse_args(argv)
     if args.out.exists():
         raise FileExistsError(f'refusing to overwrite {args.out}')
@@ -282,7 +281,7 @@ def main(argv: list[str] | None = None) -> None:
     if args.channels_npz is None:
         data['per_receiver']={'status':'not_available', 'reason':'no 16-channel verified export supplied'}
     else:
-        data['per_receiver']=evaluate_receiver_npz(args.channels_npz)
+        data['per_receiver']=evaluate_receiver_npz(args.channels_npz, allow_unverified_import=args.allow_unverified_import)
     args.out.parent.mkdir(parents=True,exist_ok=True)
     args.out.write_text(json.dumps(data,indent=2,sort_keys=True,allow_nan=False)+'\n',encoding='utf-8')
     print('cases',data['n_cases'],'summary',json.dumps(data['summary']))
