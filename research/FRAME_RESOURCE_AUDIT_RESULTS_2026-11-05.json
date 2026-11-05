@@ -1,0 +1,70 @@
+{
+  "all_75_x_5_strict_decisions_preserved": true,
+  "fixed_frame_degrees_radians": [
+    31.0,
+    0.71
+  ],
+  "full_coordinate_transport_max_abs": {
+    "max_bound_delta": 1.6653345369377348e-15,
+    "max_d2_delta": 2.220446049250313e-15,
+    "max_port_delta": 5.551115123125783e-16,
+    "max_q_delta": 2.220446049250313e-16
+  },
+  "model": "known coherent channel, circular white complex AWGN and N0=0.01",
+  "naive_fixed_diagonal_port_control": {
+    "first": {
+      "max_naive_interval_delta": 0.0658794848525652,
+      "max_naive_port_violation": 0.44147379642946355,
+      "naive_certified_decision_changes": 14,
+      "naive_interval_changes": 60,
+      "naive_physical_port_constraint_violations": 75
+    },
+    "second": {
+      "max_naive_interval_delta": 0.07294455447049816,
+      "max_naive_port_violation": 0.4888184760857718,
+      "naive_certified_decision_changes": 18,
+      "naive_interval_changes": 60,
+      "naive_physical_port_constraint_violations": 75
+    }
+  },
+  "original_sweep_summary": {
+    "circular_16psk": {
+      "A": 45,
+      "B": 18,
+      "undecided": 12
+    },
+    "eigen_psk16_oracle": {
+      "A": 33,
+      "B": 30,
+      "undecided": 12
+    },
+    "eigen_qam16_oracle": {
+      "A": 15,
+      "B": 59,
+      "undecided": 1
+    },
+    "equal_port_psk16_oracle": {
+      "A": 43,
+      "B": 24,
+      "undecided": 8
+    },
+    "qpsk_squared": {
+      "A": 18,
+      "B": 46,
+      "undecided": 11
+    }
+  },
+  "printed_receiver_control": {
+    "max_distance_and_bound_delta": 2.6645352591003757e-15,
+    "physical_channel": "single rounded printed notebook receiver only"
+  },
+  "scope": "no new channel data, no added geometry, no Bargmann predictive claim",
+  "second_frame_degrees_radians": [
+    17.0,
+    -0.49
+  ],
+  "source_cells": 75,
+  "source_munich_real_channels": 0,
+  "source_sha256": "16ad7ca1eda73d9c6a73776555be2f93333d248ad44d11a32ac9be3b05d2f4c6",
+  "status": "representation_audit_only"
+}
