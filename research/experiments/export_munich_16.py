@@ -172,6 +172,20 @@ def load_existing_npz(input_path: Path) -> tuple[np.ndarray | None, np.ndarray, 
 def archive_export(out_path: Path, H: np.ndarray, alive: np.ndarray,
                    meta: dict, raw: np.ndarray | None = None) -> dict:
     """One archive and a self-describing manifest, preserving receiver positions."""
+    # Caller metadata cannot overwrite the canonical evidence and geometry
+    # fields. A checksum of a self-authored manifest is not source attestation.
+    protected = {
+        'artifact','archive_sha256','H_all_sha256','source_repo',
+        'source_commit','source_file','num_receiver_positions','num_alive',
+        'all_16_available','receiver_order','tx_position_m',
+        'rx_positions_xyz_m','transmitter_array','receiver_array',
+        'frame_contract','max_depth','alive_threshold','reduction',
+        'raw_available','printed_H0_normalized_fro_error',
+        'printed_channel_match_is_required','recorded_utc','python','numpy'
+    }
+    conflicts = set(meta) & protected
+    if conflicts:
+        raise ValueError(f'caller metadata cannot override evidence fields: {sorted(conflicts)}')
     alive_derived = validate_normalized_h(H)
     if not np.array_equal(alive_derived, alive):
         raise ValueError("alive does not match normalized channels")
@@ -195,6 +209,7 @@ def archive_export(out_path: Path, H: np.ndarray, alive: np.ndarray,
         "all_16_available": bool(alive.all()), "receiver_order": "y outer, x inner (25,35)",
         "tx_position_m": TX_POSITION, "rx_positions_xyz_m": receiver_positions().tolist(),
         "transmitter_array": "1x1 iso VH", "receiver_array": "1x1 iso VH",
+        "frame_contract": "transmitter_VH_shared_port_basis",
         "max_depth": MAX_DEPTH, "alive_threshold": 1e-12,
         "reduction": "reshape(16,2,2,-1).sum(-1), then alive-filter and Frobenius normalize",
         "raw_available": raw is not None,
