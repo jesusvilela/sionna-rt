@@ -89,6 +89,26 @@ class MunichRunnerTests(unittest.TestCase):
         self.assertLess(result['max_Fro_Gram'],1e-12)
         with self.assertRaises(ValueError):m.compare_outputs(H[:2],other)
 
+    def test_archive_schema_matches_existing_gram_importer_and_verifies_hash(self):
+        import hashlib
+        H=np.tile(np.eye(2,dtype=complex)[None,:,:]/math.sqrt(2),(16,1,1))
+        with tempfile.TemporaryDirectory() as tmp:
+            out=Path(tmp)/'test.npz'
+            meta=m.save_archive(out,H*2,H,np.ones(16,dtype=bool),m.MODES[1],
+                                {'sionna-rt':{'version':'2.2.0','installed':True}},
+                                m.CPU_VARIANT,3.5e9,[16,2,2,1])
+            self.assertTrue(meta['all_16_available'])
+            self.assertEqual(meta['archive_sha256'],hashlib.sha256(out.read_bytes()).hexdigest())
+            self.assertEqual(json.loads(out.with_suffix('.manifest.json').read_text())['num_receiver_positions'],16)
+            with np.load(out,allow_pickle=False) as d:
+                np.testing.assert_allclose(d['H_all_normalized'],H)
+                np.testing.assert_allclose(d['H'],H)
+                np.testing.assert_allclose(d['rx_positions_xyz_m'],m.receiver_positions())
+            with self.assertRaises(FileExistsError):
+                m.save_archive(out,H,H,np.ones(16,bool),m.MODES[1],{},m.CPU_VARIANT,0,[])
+            with self.assertRaises(ValueError):
+                m.save_archive(Path(tmp)/'bad.npz',H,H,np.ones(16,bool),m.MODES[1],{},'cuda_ad_mono_polarized',0,[])
+
     def test_children_have_deadline_and_reject_negative_budget(self):
         with self.assertRaises(ValueError):m.run_mode(m.MODES[0],Path('/tmp'),0,1024)
         # A child can fail before ray tracing. Recording failure is correct.
