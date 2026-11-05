@@ -160,6 +160,22 @@ class ExportTests(TestCase):
             with self.assertRaises(FileExistsError):exp.archive_export(second,H,alive,{})
             self.assertFalse(second.exists())
 
+    def test_caller_cannot_override_provenance_or_frame_fields(self):
+        H=np.tile(np.eye(2,dtype=complex)[None,:,:]/np.sqrt(2),(16,1,1))
+        with tempfile.TemporaryDirectory() as tmp:
+            dst=Path(tmp)/'forged.npz'
+            for key,wrong in (('source_commit','0'*40),
+                              ('archive_sha256','forged'),
+                              ('all_16_available',False),
+                              ('frame_contract','arbitrary basis')):
+                with self.assertRaisesRegex(ValueError,'cannot override'):
+                    exp.archive_export(dst,H,np.ones(16,bool),
+                                       {'mode':'test-fixture',key:wrong})
+                self.assertFalse(dst.exists())
+            info=exp.archive_export(dst,H,np.ones(16,bool),
+                                    {'mode':'test-fixture'},raw=2*H)
+            self.assertEqual(info['frame_contract'],'transmitter_VH_shared_port_basis')
+
     def test_main_from_npz_and_rejected_overwrite(self):
         H=np.tile(np.eye(2,dtype=complex)[None,:,:]/np.sqrt(2),(16,1,1))
         with tempfile.TemporaryDirectory() as tmp:
