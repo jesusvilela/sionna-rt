@@ -12,6 +12,7 @@ import hashlib
 import json
 from pathlib import Path
 import numpy as np
+from munich_provenance_gate import load_munich_archive
 
 SOURCE_COMMIT = "57435845d3395b2d5e167b0893035e15ffbdaa0d"
 IDENTITY = np.eye(2, dtype=complex)
@@ -206,28 +207,13 @@ def field_diagnostics(H, relative_gap=1e-7, loop_floor=1e-10):
             'warning':'Bargmann loops of principal Gram eigenlines; not Maxwell propagation holonomy or incremental information beyond full G.'}
 
 
-def load_verified_munich(path):
-    """Require file SHA and full 16-slot source manifest before any real labeling."""
-    path=Path(path)
-    meta_path=path.with_suffix('.manifest.json')
-    if not meta_path.is_file():
-        raise ValueError('missing verified exporter manifest')
-    info=json.loads(meta_path.read_text())
-    if (info.get('source_commit')!=SOURCE_COMMIT or
-        info.get('num_receiver_positions')!=16 or
-        info.get('all_16_available') is not True):
-        raise ValueError('incomplete or mismatched source provenance')
-    if hashlib.sha256(path.read_bytes()).hexdigest()!=info.get('archive_sha256'):
-        raise ValueError('NPZ SHA-256 mismatch')
-    with np.load(path,allow_pickle=False) as d:
-        H=np.asarray(d['H_all_normalized'],complex)
-        mask=np.asarray(d['alive'],bool)
-        coords=np.asarray(d['rx_positions_xyz_m'],float)
-    if H.shape!=(16,2,2) or mask.shape!=(16,) or not mask.all():
-        raise ValueError('not 16 alive channels')
-    if not np.allclose(coords,receiver_positions(),atol=1e-8):
-        raise ValueError('receiver geometry does not match source order')
-    return H,info
+def load_verified_munich(path, *, allow_synthetic_fixture=False,
+                         allow_unverified_import=False):
+    """Validate archive structure; retain its *unverified* scientific origin."""
+    H, meta, assessment = load_munich_archive(
+        path, allow_synthetic_fixture=allow_synthetic_fixture,
+        allow_unverified_import=allow_unverified_import)
+    return H, {**meta, 'provenance_assessment': assessment}
 
 
 def demo():
@@ -248,15 +234,18 @@ def demo():
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--channels-npz',type=Path)
+    parser.add_argument('--allow-unverified-import',action='store_true',help='manual archives are diagnostic only')
     parser.add_argument('--out',type=Path)
     args=parser.parse_args(argv)
     if args.channels_npz is None:
         result=demo()
         result['per_receiver']={'status':'not_available','reason':'no verified 16-Munich-channel archive supplied'}
     else:
-        H,manifest=load_verified_munich(args.channels_npz)
+        H,manifest=load_verified_munich(args.channels_npz, allow_unverified_import=args.allow_unverified_import)
         result=field_diagnostics(H)
-        result['per_receiver']={'status':'derived_from_verified_archive',
+        result['per_receiver']={'status':manifest['provenance_assessment']['classification'],
+                                'origin_authenticated':False,
+                                'provenance':manifest['provenance_assessment'],
                                 'archive_sha256':manifest['archive_sha256'],
                                 'mode':manifest.get('mode')}
     payload=json.dumps(result,indent=2,sort_keys=True,allow_nan=False)+'\n'
