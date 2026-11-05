@@ -100,6 +100,56 @@ def oriented_triangles():
             (2*y+1,2*y+3,2*y+2) for y in range(7)]
 
 
+def oriented_boundary_edges(triangles=None):
+    """Return the oriented boundary of the source triangulation (16 edges)."""
+    from collections import Counter
+    triangles = oriented_triangles() if triangles is None else triangles
+    counts = Counter((a,b) for i,j,k in triangles
+                     for a,b in ((i,j),(j,k),(k,i)))
+    boundary=[]
+    for (i,j),num in counts.items():
+        reverse=counts.get((j,i),0)
+        if num != 1 or reverse > 1:
+            raise ValueError('nonmanifold or duplicated oriented edge')
+        if reverse == 0:
+            boundary.append((i,j))
+    return boundary
+
+
+def surface_phase(projectors, transports=None, floor=1e-10):
+    """Discrete Stokes/Pancharatnam gluing on the 14 oriented mesh faces.
+
+    Product of normalized complex face Bargmann loops = product of normalized
+    transported Jones overlaps on oriented boundary. No quantization claim.
+    """
+    if len(projectors) != 16 or any(P is None for P in projectors):
+        raise ValueError('need 16 nondegenerate principal projectors')
+    vectors = [np.linalg.eigh(p)[1][:,1] for p in projectors]
+    def T(i,j):
+        return IDENTITY if transports is None else transports[(i,j)]
+    def edge(i,j):
+        z=np.vdot(vectors[i],T(i,j)@vectors[j])
+        if abs(z)<=floor:
+            raise ValueError('zero-overlap edge: phase undefined')
+        return z/abs(z)
+    face_product=1+0j
+    for i,j,k in oriented_triangles():
+        B=transported_bargmann(projectors,transports,(i,j,k)) if transports is not None else bargmann(projectors[i],projectors[j],projectors[k])
+        if abs(B)<=floor:
+            raise ValueError('zero-overlap triangle: phase undefined')
+        face_product*=B/abs(B)
+    boundary=oriented_boundary_edges()
+    boundary_product=1+0j
+    for i,j in boundary:
+        boundary_product*=edge(i,j)
+    return {'faces':14,'boundary_edges':boundary,
+            'euler_characteristic':16-29+14,
+            'face_product':[float(face_product.real),float(face_product.imag)],
+            'boundary_product':[float(boundary_product.real),float(boundary_product.imag)],
+            'phase_rad':float(np.angle(face_product)),
+            'gluing_residual':float(abs(face_product-boundary_product))}
+
+
 def field_diagnostics(H, relative_gap=1e-7, loop_floor=1e-10):
     """Keep projectors and complex loops; abstain at degeneracy/zero overlap."""
     H=np.asarray(H,dtype=complex)
@@ -147,8 +197,12 @@ def field_diagnostics(H, relative_gap=1e-7, loop_floor=1e-10):
                       'bargmann':[float(z.real),float(z.imag)],
                       'phase_rad':float(np.angle(z)) if state=='defined' else None,
                       'overlap_magnitude':float(abs(z))})
+    try:
+        surface=surface_phase(P)
+    except ValueError as err:
+        surface={'state':'undefined','reason':str(err)}
     return {'type':'synthetic_or_verified_channel_Gram_projector_field',
-            'sites':sites,'edges':edges,'triangles':loops,
+            'sites':sites,'edges':edges,'triangles':loops,'surface_gluing':surface,
             'warning':'Bargmann loops of principal Gram eigenlines; not Maxwell propagation holonomy or incremental information beyond full G.'}
 
 
