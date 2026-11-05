@@ -4,20 +4,42 @@ No alternative model, target, threshold or train/test split is tried here.
 """
 import tempfile
 import unittest
+import os
+import sys
+import json
 from pathlib import Path
 
 import numpy as np
 from numpy.testing import assert_allclose
+ROOT = Path(__file__).resolve().parents[1] if Path(__file__).resolve().parent.name == "tests" else Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT / "experiments") if (ROOT / "experiments").is_dir() else str(ROOT))
 import bargmann_ablation as a
 
-SOURCE = Path('/mnt/data/sionna_gram_checkpoint/gram_sweep_2026-11-04.json')
+SOURCE = Path(os.environ.get("SIONNA_GRAM_SWEEP", ROOT / "experiments" / "gram_sweep_2026-11-04.json"))
 
 
 class SyntheticAuditTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.groups,cls.sha=a.source_rows(SOURCE)
+        cls._temporary = None
+        cls.source = SOURCE
+        if not cls.source.is_file():
+            # The original 75-case JSON is not committed because it is generated
+            # deterministically by the existing gram_decision_sweep.py source.
+            from gram_decision_sweep import sweep
+            data=sweep()
+            data['per_receiver']={'status':'not_available',
+                'reason':'no 16-channel verified export supplied'}
+            cls._temporary = tempfile.TemporaryDirectory()
+            cls.source = Path(cls._temporary.name) / 'gram_sweep_2026-11-04.json'
+            cls.source.write_text(json.dumps(data, indent=2, sort_keys=True, allow_nan=False)+'\n')
+        cls.groups,cls.sha=a.source_rows(cls.source)
         cls.rows=a.make_features(cls.groups)
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls._temporary is not None:
+            cls._temporary.cleanup()
 
     def test_input_integrity_and_forbidden_isotropic_projector(self):
         self.assertEqual(self.sha,a.FROZEN_SHA256)
@@ -28,7 +50,7 @@ class SyntheticAuditTests(unittest.TestCase):
             self.assertEqual(sorted(nodes),list(a.PHIS))
         with tempfile.TemporaryDirectory() as directory:
             path=Path(directory)/'tampered.json'
-            path.write_bytes(SOURCE.read_bytes()+b' ')
+            path.write_bytes(self.source.read_bytes()+b' ')
             with self.assertRaisesRegex(ValueError,'SHA mismatch'):
                 a.source_rows(path)
 
