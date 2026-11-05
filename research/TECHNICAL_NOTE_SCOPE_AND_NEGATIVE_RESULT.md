@@ -66,6 +66,8 @@ python -m unittest discover -s research/tests -p 'test_bargmann_ablation.py' -v
 
 The [negative-result ledger](./ABLATION_OUTCOME_2026-11-05.json) preserves source/result SHA-256 hashes and the frozen decision threshold. Seven structural/metamorphic regression tests pass; they are self-authored, not independent scientific replication. These scripts create no physical channel data.
 
+**Data-ingestion correction (5 November).** A self-authored NPZ plus matching SHA256 is not independently authenticated Munich propagation evidence. The [provenance gate](./MUNICH_PROVENANCE_AUDIT.md) now rejects synthetic fixtures and unverified imports by default; CPU regenerated channels remain explicitly labeled *candidates*. There are still **0/16 authenticated Munich matrices**. This changes only the evidence interface, not any constellation bound or negative-result conclusion.
+
 ## Evidence boundary and smallest next action
 
 **Proved under model:** Gaussian pairwise bounds, printed-channel conditional ordering, full-Gram sufficiency; **measured in synthetic data:** 75-case classifications and one frozen held-out ablation; **known prior mathematics:** Pancharatnam/Bargmann phases; **open:** actual 16 Munich receivers, external propagation generalization and fair optimized-baseline testing; **retired:** determinant's unique causal performance role, and a demonstrated Bargmann engineering advantage for the synthetic per-site decision.
