@@ -1,0 +1,70 @@
+{
+  "N0": 0.01,
+  "codebooks": [
+    "rank_one",
+    "qpsk_squared",
+    "circular_16psk",
+    "equal_port_psk16_oracle",
+    "eigen_psk16_oracle",
+    "eigen_qam16_oracle"
+  ],
+  "comparisons_per_frame": 375,
+  "evidence": {
+    "M": "frozen synthetic sweep and local CPU black-box regression",
+    "P": "conditional coherent AWGN/colored-noise algebra",
+    "R": "naive use of Euclidean receiver metric after nonunitary frame transform",
+    "no_Munich_16_rx_matrices": true,
+    "no_novel_physical_result": true
+  },
+  "full_75_cell_artifact_name": "colored_noise_frame_results.json",
+  "full_75_cell_artifact_sha256": "3478aa1973a859da38da327efebfcd536ca68ae690aa24f0bd3fc7458f5505f8",
+  "printed_channel_blackbox": {
+    "decision_differences": {
+      "first": 0,
+      "second": 0
+    },
+    "max_full_symbol_metric_delta": 4.440892098500626e-15,
+    "n_symbols": 2048,
+    "noise_model": "original source-printed H; sampled CN(0,N0 I)",
+    "seed": 20261105
+  },
+  "source_cells": 75,
+  "source_sha256": "16ad7ca1eda73d9c6a73776555be2f93333d248ad44d11a32ac9be3b05d2f4c6",
+  "stages": {
+    "first": {
+      "max_bound_delta": 1.2212453270876722e-15,
+      "max_d2_delta": 3.552713678800501e-15,
+      "max_gram_delta": 5.551213373407544e-16,
+      "max_port_energy_delta": 6.661338147750939e-16,
+      "max_trace_wrong_gram_delta": 0.42292484460740176,
+      "max_trace_wrong_interval_delta": 0.2803745709427238,
+      "max_wrong_gram_delta": 0.5538141726994795,
+      "max_wrong_interval_delta": 0.22709506870845875,
+      "n_trace_wrong_cells_any_change": 45,
+      "n_trace_wrong_decision_changes": 96,
+      "n_wrong_cells_any_change": 45,
+      "n_wrong_decision_changes": 96,
+      "trace_wrong_strict_flips": 31,
+      "worst_covariance_condition": 11.256541330064833,
+      "wrong_strict_flips": 40
+    },
+    "second": {
+      "max_bound_delta": 2.220446049250313e-15,
+      "max_d2_delta": 6.217248937900877e-15,
+      "max_gram_delta": 4.441491886085599e-16,
+      "max_port_energy_delta": 1.3322676295501878e-15,
+      "max_trace_wrong_gram_delta": 0.36895444456265225,
+      "max_trace_wrong_interval_delta": 0.22886606322703912,
+      "max_wrong_gram_delta": 0.5137079254047507,
+      "max_wrong_interval_delta": 0.1930378355875217,
+      "n_trace_wrong_cells_any_change": 43,
+      "n_trace_wrong_decision_changes": 79,
+      "n_wrong_cells_any_change": 43,
+      "n_wrong_decision_changes": 77,
+      "trace_wrong_strict_flips": 28,
+      "worst_covariance_condition": 7.394016378295074,
+      "wrong_strict_flips": 28
+    }
+  },
+  "status": "CPU_synthetic_whitening_covariance_audit_only"
+}
