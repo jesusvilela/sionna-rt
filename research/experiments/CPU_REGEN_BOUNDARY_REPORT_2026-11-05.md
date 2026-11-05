@@ -6,7 +6,7 @@
 
 **The 16 receiver channels were not regenerated.** This execution environment has no `sionna`, `mitsuba` or `drjit`, and PyPI cannot be resolved by the sandbox network (error: `[Errno -3] Temporary failure in name resolution`). An explicit `pip install sionna-rt==2.2.0` failed before downloading a wheel. Two isolated child processes attempted the exact-notebook and deterministic CPU modes, but both stopped before initializing ray tracing. No real or synthetic surrogate was committed as a Munich channel array; no Frobenius or Gram difference between nonexistent runs is reported.
 
-We completed the theory and regression part: an exact finite quarter-phase-orbit minimum-distance envelope gives the leading high-SNR boundary, and stronger coherent-AWGN bounds resolve **19** of the previous **44** undecided grid comparisons. All **18 new CPU tests passed**. They are local self-authored validations, not NVIDIA CI.
+We completed the theory and regression part: an exact finite quarter-phase-orbit minimum-distance envelope gives the leading high-SNR boundary, and stronger coherent-AWGN bounds resolve **19** of the previous **44** undecided grid comparisons. All **19 new CPU tests passed**. They are local self-authored validations, not NVIDIA CI.
 
 ## 1. Environment and bounded attempts
 
@@ -20,10 +20,12 @@ We completed the theory and regression part: an exact finite quarter-phase-orbit
 
 | Attempt | Hard wall budget | Virtual-memory cap | Actual elapsed | Result |
 |---|---:|---:|---:|---|
-| Exact-notebook best effort | 30 s | 4096 MiB | 1.124 s | Dependency failure before solver |
-| Deterministic CPU | 30 s | 4096 MiB | 0.939 s | Dependency failure before solver |
+| Exact-notebook best effort | 30 s | 4096 MiB | 0.874 s | Dependency failure before solver |
+| Deterministic CPU | 30 s | 4096 MiB | 0.837 s | Dependency failure before solver |
 
 The bounded subprocess runner isolates each mode, enforces `RLIMIT_AS` and a wall-clock deadline, records exit status, and terminates a timed-out process group. It refuses a non-CPU Mitsuba variant. If a run succeeds in a network-enabled environment, the output contains **all 16 positional slots**, alive mask, raw and Frobenius-normalized complex matrices, receiver coordinates, source revision, runtime package versions and SHA-256 manifest.
+
+The final runner also refuses stale, partial or tampered outputs: a comparison is permitted only when both **current** solver attempts succeeded and each current NPZ checksum, mode, source revision and CPU backend match its manifest. An extra adversarial regression corrupts a temporary archive and verifies rejection.
 
 The exporter keys were matched to the previous `gram_decision_sweep.py` contract: `H_all_normalized`, `H`, `alive` and `rx_positions_xyz_m`, plus `num_receiver_positions=16`, `all_16_available` and `archive_sha256`. A synthetic **temporary-file regression** verifies the layout; no such temporary file is represented as physical evidence.
 
@@ -140,13 +142,13 @@ At the finite `N0=.01` bound-certified rule, there are **four circular-codebook 
 
 ## 5. Tests, hashes and remaining gate
 
-**18/18 new CPU regression tests pass**. They independently enumerate all received 16-point distances against the quarter-phase envelope on random Gram matrices, test exact diagonal thresholds, check 75 archived cells, run Gaussian-AWGN sample sanity checks, test 16-QAM algebra, verify the 16-PSK wedge bounds, prove-by-counterworld that H and Gram distances differ under receive-unitary transformations, and confirm isolated subprocess/dependency failure handling. The newest test verifies the exporter schema, SHA-256 manifest and no-GPU validation.
+**19/19 new CPU regression tests pass**. They independently enumerate all received 16-point distances against the quarter-phase envelope on random Gram matrices, test exact diagonal thresholds, check 75 archived cells, run Gaussian-AWGN sample sanity checks, test 16-QAM algebra, verify the 16-PSK wedge bounds, prove-by-counterworld that H and Gram distances differ under receive-unitary transformations, and confirm isolated subprocess/dependency failure handling. The newest test verifies the exporter schema, SHA-256 manifest and no-GPU validation.
 
 Git blob hashes matched the **actual tested local source**:
 
 - `gram_boundary_tightening.py`: `7ffb3655428f62abd461f41664a7c6599b552dc3`
-- `munich_cpu_runner.py`: `3bb8786ee336654192bd81871f021ece7ede2838`
-- `test_regen_gram.py`: `4a16fb8690cf322ebf0bf3e33dc0ebd0bdab658b`
+- `munich_cpu_runner.py`: `eb1ddd869e64fee76e408755e42961b0825a933d`
+- `test_regen_gram.py`: `aa3d795f9d804eb2799591c7b5891e48bfc80ddf`
 
 Input 75-case JSON SHA256: `16ad7ca1eda73d9c6a73776555be2f93333d248ad44d11a32ac9be3b05d2f4c6`. Full tightened output JSON SHA256: `910c533b298c2ba9d790dd259017832819a0f0732492911e4d385bc8ccfcb2c6`. The compact count ledger and blocked-attempt manifest are committed, while the full 75-cell JSON can be regenerated from the saved source sweep.
 
