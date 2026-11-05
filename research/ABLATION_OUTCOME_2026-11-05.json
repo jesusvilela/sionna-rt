@@ -1,0 +1,43 @@
+{
+  "prereg_committed_before_fit": "93f0b3db10f1f44c497f5aee6d0d8b651219e97f",
+  "source_grid_sha256": "16ad7ca1eda73d9c6a73776555be2f93333d248ad44d11a32ac9be3b05d2f4c6",
+  "full_local_results_sha256": "e84e26e61c6cd98caff6650e9bd65546abb50f3b265f47cf9fd573b2a69d1f7e",
+  "source_grid_cells": 75,
+  "isotropic_cells_excluded": 15,
+  "train_rows": 36,
+  "test_rows": 24,
+  "train_groups": 12,
+  "test_groups": 8,
+  "train_labels": {
+    "not_certified": 18,
+    "certified": 18
+  },
+  "test_labels": {
+    "not_certified": 12,
+    "certified": 12
+  },
+  "target": "archived strict rank-one SER-bound certification versus fixed off-cone circular 16-PSK; not-certified includes abstention",
+  "baseline": "eigenvalue ratio + three anchored pairwise overlaps + two same-triple pairwise overlaps",
+  "increment": "Re and Im tr(P_phi0 P_phi90 P_phi180)",
+  "metric": "held-out Brier loss (lower is better)",
+  "baseline_brier": 0.18543107566883762,
+  "with_B_brier": 0.5,
+  "B_minus_baseline_brier": 0.31456892433116235,
+  "grouped_bootstrap_95pct": [
+    0.12153455834841748,
+    0.5496697651342445
+  ],
+  "promotion_gate": {
+    "delta_at_most": -0.02,
+    "group_CI_upper_below": 0
+  },
+  "gate_passed": false,
+  "outcome": "NO: retire proposed incremental synthetic per-site engineering predictive usefulness for Bargmann feature",
+  "train_chirality_absolute_max": "< 2e-15",
+  "test_chirality_absolute_max": "~0.1767766953",
+  "audit_caveat": "out-of-support chirality causes severe standardizer extrapolation; magnitude of deterioration not evidence of universal harm",
+  "mathematical_sufficiency": "anchored overlaps + eigenvalue ratio recover full trace-1 Gram; label is determined by this Gram; no additional Bayes information in triangle B for this target",
+  "limits": "artificial three-phi groups, not physically neighboring receivers; 0 of 16 Munich propagation matrices available; no NVlabs change",
+  "independent_evidence": "seven structural/metamorphic tests; cannot claim third-party replication",
+  "next_step_executed": "fork-only short technical note committed; stop geometry expansion"
+}
