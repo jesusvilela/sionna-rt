@@ -109,6 +109,18 @@ class MunichRunnerTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 m.save_archive(Path(tmp)/'bad.npz',H,H,np.ones(16,bool),m.MODES[1],{},'cuda_ad_mono_polarized',0,[])
 
+    def test_comparison_rejects_stale_or_corrupted_artifacts(self):
+        H=np.tile(np.eye(2,dtype=complex)[None,:,:]/math.sqrt(2),(16,1,1))
+        with tempfile.TemporaryDirectory() as tmp:
+            out=Path(tmp)/f'{m.MODES[0]}.npz'
+            m.save_archive(out,H,H,np.ones(16,bool),m.MODES[0],{},m.CPU_VARIANT,0,[])
+            self.assertIsNone(m.load_verified_output(tmp,m.MODES[0],{'status':'failed'}))
+            recovered=m.load_verified_output(tmp,m.MODES[0],{'status':'succeeded'})
+            np.testing.assert_allclose(recovered,H)
+            with out.open('ab') as f:f.write(b'corruption')
+            with self.assertRaisesRegex(ValueError,'checksum mismatch'):
+                m.load_verified_output(tmp,m.MODES[0],{'status':'succeeded'})
+
     def test_children_have_deadline_and_reject_negative_budget(self):
         with self.assertRaises(ValueError):m.run_mode(m.MODES[0],Path('/tmp'),0,1024)
         # A child can fail before ray tracing. Recording failure is correct.
