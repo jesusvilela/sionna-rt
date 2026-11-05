@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import tempfile
 from pathlib import Path
 import sys
@@ -14,7 +15,7 @@ HERE=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(HERE/'experiments'))
 import frame_resource_audit as audit
 
-SOURCE=Path('/mnt/data/sionna_gram_checkpoint/gram_sweep_2026-11-04.json')
+SOURCE=Path(os.environ.get('SIONNA_GRAM_SWEEP', HERE/'experiments'/'gram_sweep_2026-11-04.json'))
 
 
 def independent_direct_received_d2(H,C):
@@ -26,13 +27,30 @@ def independent_direct_received_d2(H,C):
 class FrameAuditTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.source=audit.load_source(SOURCE)
+        cls._fixture_dir = None
+        cls.source_path = SOURCE
+        if not cls.source_path.exists():
+            # Regenerate from the previously committed frozen sweep source;
+            # do not require any model-specific /mnt/data directory.
+            from gram_decision_sweep import sweep
+            data=sweep()
+            data['per_receiver']={'status':'not_available',
+                'reason':'no 16-channel verified export supplied'}
+            cls._fixture_dir=tempfile.TemporaryDirectory()
+            cls.source_path=Path(cls._fixture_dir.name)/'gram_sweep_2026-11-04.json'
+            cls.source_path.write_text(json.dumps(data,sort_keys=True,indent=2,allow_nan=False)+'\n')
+        cls.source=audit.load_source(cls.source_path)
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls._fixture_dir is not None:
+            cls._fixture_dir.cleanup()
 
     def test_frozen_source_integrity_with_tamper_rejection(self):
-        self.assertEqual(hashlib.sha256(SOURCE.read_bytes()).hexdigest(),audit.EXPECTED_SHA256)
+        self.assertEqual(hashlib.sha256(self.source_path.read_bytes()).hexdigest(),audit.EXPECTED_SHA256)
         with tempfile.TemporaryDirectory() as tmp:
             f=Path(tmp)/'tampered.json'
-            f.write_bytes(SOURCE.read_bytes()+b' ')
+            f.write_bytes(self.source_path.read_bytes()+b' ')
             with self.assertRaisesRegex(ValueError,'SHA256'):
                 audit.load_source(f)
 
