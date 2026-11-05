@@ -133,6 +133,28 @@ The code preserves, when a manifest-verified archive eventually exists:
 
 The program requires the prior CPU exporter's `.manifest.json` **and** SHA-256-complete `.npz`, source commit, 16 alive positions, and correct receiver coordinate ordering. Its default mode runs a clearly labeled synthetic three-ray demonstration and marks **per-receiver real evidence unavailable**. It cannot turn one printed notebook channel into 16 measured ones.
 
+### Local-to-global gluing: discrete Pancharatnam–Stokes law [P, conditional]
+
+The 14 oriented triangles form a topological disk: 16 vertices, 29 unoriented edges, 14 faces, hence Euler characteristic 16−29+14=1. The oriented boundary consists of exactly 16 edges. For any triangle whose three overlaps are nonzero, the normalized Bargmann product is the product of its **three normalized, transported edge-overlap amplitudes**.
+
+Multiplying the 14 oriented triangles cancels every internal oriented edge against its reciprocal. Thus
+
+\[
+\boxed{
+\prod_{(i,j,k)\in F}\frac{\mathcal B_{ijk}}{|\mathcal B_{ijk}|}
+=
+\prod_{(i,j)\in\partial K}
+\frac{\langle u_i,T_{i\leftarrow j}u_j\rangle}
+{|\langle u_i,T_{i\leftarrow j}u_j\rangle|}
+}
+\]
+
+for reciprocal unitary transports (in particular, the flat source-fiber transitions used here). The phases of the arbitrarily selected eigenvector representatives \(u_i\) cancel around the closed boundary. The relation is preserved when each site is put through **two successive moving frames**, provided their transport maps are updated.
+
+It is a **discrete Stokes/gluing identity for complex projector geometry**, not a quantized Chern invariant of the open Munich strip. It is also not a measurement of a Maxwell radiation-field connection. A nonzero phase can arise purely from the trajectory of principal Gram eigenlines even when the bookkeeping transport is flat.
+
+The new function returns both the complete oriented boundary and both complex products, together with their difference, refusing to assign phases if an edge or face overlap vanishes. Its local CPU randomized regression verifies a residual below \(10^{-12}\) in both original and independently reframed coordinates.
+
 ## 5. Test and adversarial controls
 
 Reproduce from the fork root, with NumPy only:
@@ -144,7 +166,7 @@ python research/experiments/moving_frame.py
 python research/experiments/moving_frame.py --channels-npz path/to/munich_channels.npz --out receiver_moving_frames.json
 ```
 
-Fourteen tests check:
+Sixteen tests check:
 
 1. exact \((1\pm i)/4\) values and reversed triangle;
 2. mirror with identical pairwise overlap magnitudes and opposite phase;
@@ -161,10 +183,10 @@ Fourteen tests check:
 13. rejection of malformed/unnormalized channel arrays;
 14. prohibition on silently loading an unverified/missing Munich archive.
 
-The tests are local, AI-authored and correlated with the implementation; exact algebra and adversarial metamorphic witnesses are more substantial than a pass count alone.
+Additional tests (15–16) certify the discrete 14-face-to-16-boundary complex gluing identity under independent local gauges, and enforce an explicit abstention for zero-overlap paths. The tests are local, AI-authored and correlated with the implementation; exact algebra and adversarial metamorphic witnesses are more substantial than a pass count alone.
 
-**Local Git-blob SHA-1 of tested source:** `952d7d318cde497efec83d2c668aa2ff5b19bcd7`.  
-**Local Git-blob SHA-1 of tested tests:** `d95fb4de4b1c13cf56634f7d5d206c3ca0e500f2`.  
+**Local Git-blob SHA-1 of tested source:** `3887ace7c0c1ac43e0e94a50a65253661f2444ff`.  
+**Local Git-blob SHA-1 of tested tests:** `ce035ec322133e372bbdc3f9888d850b7fa656e4`.  
 Both have been compared against fetched GitHub file blobs.
 
 ## 6. Boundary of scientific meaning / next smallest discriminating step
