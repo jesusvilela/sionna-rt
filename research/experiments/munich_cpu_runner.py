@@ -177,6 +177,29 @@ def run_mode(mode,out_dir,wall_seconds,memory_mib,script_path=None):
     return result
 
 
+
+def load_verified_output(out_dir,mode,attempt):
+    """Never compare stale partial output from an unsuccessful current run."""
+    if attempt['status']!='succeeded':return None
+    path=Path(out_dir)/f'{mode}.npz'
+    manifest=path.with_suffix('.manifest.json')
+    if not path.is_file() or not manifest.is_file():
+        raise ValueError('successful process did not produce a complete artifact')
+    info=json.loads(manifest.read_text())
+    if info.get('mode')!=mode or info.get('source_commit')!=HEAD or info.get('CPU_variant')!=CPU_VARIANT:
+        raise ValueError('source, mode, or CPU provenance mismatch')
+    if hashlib.sha256(path.read_bytes()).hexdigest()!=info.get('archive_sha256'):
+        raise ValueError('archive checksum mismatch')
+    with np.load(path,allow_pickle=False) as d:
+        H=np.asarray(d['H_all_normalized'],complex)
+        alive=np.asarray(d['alive'],bool)
+    if H.shape!=(16,2,2) or alive.shape!=(16,) or not np.isfinite(H).all():
+        raise ValueError('bad channel shape/mask/values')
+    if not np.allclose(np.linalg.norm(H[alive],axis=(1,2)),1,atol=5e-7):
+        raise ValueError('un-normalized living channels')
+    return H
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--mode',choices=('both','reduced')+MODES,default='both')
@@ -197,12 +220,16 @@ def main():
     for mode in modes:
         result=run_mode(mode,a.out_dir,a.wall_seconds,a.memory_mib)
         report['attempts'].append(result)
-    exact=a.out_dir/f'{MODES[0]}.npz'
-    det=a.out_dir/f'{MODES[1]}.npz'
-    if exact.is_file() and det.is_file():
-        with np.load(exact,allow_pickle=False) as ae,np.load(det,allow_pickle=False) as be:
-            report['comparison']=compare_outputs(ae['H'],be['H'])
-    else:report['comparison']={'status':'not_measurable','reason':'both actual channel arrays required'}
+    statuses={entry['mode']:entry for entry in report['attempts']}
+    if all(mode in statuses for mode in MODES[:2]):
+        exact=load_verified_output(a.out_dir,MODES[0],statuses[MODES[0]])
+        det=load_verified_output(a.out_dir,MODES[1],statuses[MODES[1]])
+        if exact is not None and det is not None:
+            report['comparison']=compare_outputs(exact,det)
+        else:
+            report['comparison']={'status':'not_measurable','reason':'both current successful and verified channel arrays required'}
+    else:
+        report['comparison']={'status':'not_measurable','reason':'both configuration modes were not run together'}
     a.out_dir.mkdir(parents=True,exist_ok=True)
     (a.out_dir/'attempt_summary.json').write_text(json.dumps(report,indent=2,sort_keys=True)+'\n')
     print(json.dumps(report,indent=2))
