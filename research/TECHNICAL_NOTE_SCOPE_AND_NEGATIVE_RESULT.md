@@ -46,6 +46,29 @@ The existing **75-case synthetic** sweep of five ratios, five principal angles a
 
 These are **grid counts**, not samples from radio propagation or a success rate. They can be reproduced from the checked-in `gram_decision_sweep.py`; the archived 75-cell JSON has SHA-256 `16ad7ca1eda73d9c6a73776555be2f93333d248ad44d11a32ac9be3b05d2f4c6`.
 
+## Covariance-aware decoding: a reproducible engineering check
+
+The Gram decision rule above assumes **white** complex Gaussian receiver noise. For a known positive-definite covariance \(\Sigma\) in \(n\sim\mathcal{CN}(0,N_0\Sigma)\), use the *noise-weighted* Gram \(G_\Sigma=H^\dagger\Sigma^{-1}H\). Under an invertible receiver-coordinate change \(W\) and unitary transmitter-coordinate change \(U\), transport **all** objects: \(H'=WHU^\dagger\), \(\Sigma'=W\Sigma W^\dagger\), \(x'=Ux\), including the physical transmit-port projectors. Then \(G'_\Sigma=UG_\Sigma U^\dagger\), preserving all conditional ML pair distances and Gaussian SER bounds. This is **standard whitening/coherent-detection mathematics**, not new 6G physics.
+
+The [frozen CPU protocol](./COLORED_NOISE_FRAME_PREREG.md) checked six existing codebooks across the **same 75 synthetic Gram cells**, with two fixed nonunitary receiver-frame changes and \(N_0=0.01\):
+
+| Test | First frame | Two successive frames |
+|---|---:|---:|
+| Correctly transported decisions preserved | **375/375** | **375/375** |
+| Incorrectly assume transformed noise remains white: changed decisions | **96/375** | **77/375** |
+| Same incorrect white metric, adjusted to the correct trace: changed decisions | **96/375** | **79/375** |
+| Maximum correct Gaussian-bound deviation | 1.22×10⁻¹⁵ | 2.22×10⁻¹⁵ |
+
+Changed decisions include transitions into or out of *undecided*, not only strict reversals. An independent numerical decoding path on **2,048 seeded noise realizations using the one printed H** returned zero changed ML decisions under the correctly transported metric. Neither check is a new channel measurement: **0/16 Munich matrices and no measured colored-noise covariance** remain available. The engineering requirement is to preserve the covariance and physical polarization frame whenever receiver data are transformed.
+
+The [compact result ledger](./COLORED_NOISE_FRAME_RESULTS.json), [executable audit](./experiments/colored_noise_frame_audit.py) and [12 regression tests](./tests/test_colored_noise_frame_audit.py) record the evidence. Reproduce on CPU with NumPy and SciPy, from the fork root (use fresh output filenames):
+
+~~~bash
+python research/experiments/gram_decision_sweep.py --out research/experiments/gram_sweep_2026-11-04.json
+python research/experiments/colored_noise_frame_audit.py --source research/experiments/gram_sweep_2026-11-04.json --out colored_noise_frame_results.json
+python -m unittest discover -s research/tests -p 'test_colored_noise_frame_audit.py' -v
+~~~
+
 ## Retired prediction claim: three-site geometric phase
 
 The classical invariant `B_ijk=tr(P_i P_j P_k)` is mathematically legitimate. We froze a grouped train/test ablation before fitting: 60 nonisotropic synthetic cells, 36 training rows and 24 held-out rows, target the archived strict rank-one-better-than-circular decision, pairwise overlaps plus eigenvalue ratio versus the same model with `Re B, Im B` added.
@@ -70,6 +93,6 @@ The [negative-result ledger](./ABLATION_OUTCOME_2026-11-05.json) preserves sourc
 
 ## Evidence boundary and smallest next action
 
-**Proved under model:** Gaussian pairwise bounds, printed-channel conditional ordering, full-Gram sufficiency; **measured in synthetic data:** 75-case classifications and one frozen held-out ablation; **known prior mathematics:** Pancharatnam/Bargmann phases; **open:** actual 16 Munich receivers, external propagation generalization and fair optimized-baseline testing; **retired:** determinant's unique causal performance role, and a demonstrated Bargmann engineering advantage for the synthetic per-site decision.
+**Proved under model:** Gaussian pairwise bounds, printed-channel conditional ordering, white-noise Gram sufficiency and covariance-aware frame equivalence; **measured in synthetic data:** 75-case classifications, a frozen held-out ablation and a covariance-transport regression; **known prior mathematics:** Pancharatnam/Bargmann phases; **open:** actual 16 Munich receivers, external propagation generalization and fair optimized-baseline testing; **retired:** determinant's unique causal performance role, and a demonstrated Bargmann engineering advantage for the synthetic per-site decision.
 
 **Next smallest permissible action:** preserve this concise, source-linked note as the fork's scientific entry point. Stop building geometric layers or fitting new synthetic variations. Only reopen the propagation question if a source-matched, versioned 16-receiver H archive becomes available; the prior CPU regeneration attempt was blocked by Sionna/Mitsuba/Dr.Jit dependency resolution. No synthetic approximation substitutes for those measurements.
