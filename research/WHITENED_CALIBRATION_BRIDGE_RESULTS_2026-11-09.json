@@ -1,0 +1,64 @@
+{
+  "title": "Source-calibration-to-effective-Gram uncertainty acceptance bridge",
+  "date": "2026-11-09",
+  "original_Munich_receiver_matrices_recovered": 0,
+  "category": "conditional standard matrix inverse perturbation plus CPU synthetic regression",
+  "scientific_novelty_claim": false,
+  "physical_radio_benefit_claim": false,
+  "source_sha256": "16ad7ca1eda73d9c6a73776555be2f93333d248ad44d11a32ac9be3b05d2f4c6",
+  "prereg_path": "research/WHITENED_CALIBRATION_BRIDGE_PREREG_2026-11-09.md",
+  "code_path": "research/experiments/whitened_calibration_bridge.py",
+  "tests_path": "research/tests/test_whitened_calibration_bridge.py",
+  "theorem": {
+    "given": "L L†=Sigmahat, Z=L^-1 Hhat, F=L^-1(H-Hhat), R=L^-1(Sigma-Sigmahat)L^-†; ||F||2<=tau, ||R||2<=rho<1",
+    "conclusion": "||H†Sigma^-1 H - Hhat†Sigmahat^-1 Hhat||2 <= (||Z||2^2 rho + 2||Z||2 tau + tau^2)/(1-rho)",
+    "frame": "a,tau,rho and effective-Gram bound invariant under simultaneous receiver GL(2,C), input U(2), and noise covariance transport",
+    "tightness": "aligned diagonal Hermitian covariance and channel errors attain equality for a=1.25,b=.3,tau=.05,rho=.2",
+    "limitation": "not formally proved by a kernel, no independent calibration evidence"
+  },
+  "saturator": {
+    "analytic_value": 0.55,
+    "cpu_actual_gram_error": 0.5500000000000003,
+    "cpu_derived_bound": 0.5499999999999999,
+    "cpu_absolute_residual": 3.3306690738754696e-16
+  },
+  "deterministic_synthetic_test": {
+    "cases": 600,
+    "frozen_gram_cells": 75,
+    "seed": 20261109,
+    "composed_frame_checks": 48,
+    "max_observed_positive_bound_excess_in_success_run": 1.7571592625747184e-16,
+    "max_frame_budget_parameter_difference_success_run": 5.629177679544739e-16,
+    "max_invalid_fixed_noise_metric_change": 1.5892705632236006,
+    "note": "machine-roundoff residuals at 1e-16 scale; test-gate tolerances 1e-11 and 2e-10"
+  },
+  "illustrative_only": {
+    "assumptions": "tau=0.001 and rho=0.001 are chosen hypothetical bounds, not measured receiver calibration",
+    "counterworld_A": {
+      "derived_effective_gram_error_bound": 0.0028198359235056,
+      "prior_required_bound": 0.020364816713798736,
+      "result": "passes conditional synthetic example"
+    },
+    "counterworld_B": {
+      "derived_effective_gram_error_bound": 0.0029841575478688374,
+      "prior_required_bound": 0.009900990099009875,
+      "result": "passes conditional synthetic example"
+    }
+  },
+  "CI": {
+    "first_run": "https://github.com/jesusvilela/sionna-rt/actions/runs/42691260633",
+    "first_run_status": "223/223 unit tests passed, but standalone CI gate failed on bit-exact float comparison .5499999999999999 == .55",
+    "corrected_run": "https://github.com/jesusvilela/sionna-rt/actions/runs/42691468179",
+    "corrected_run_status": "223/223 tests and independent standalone gate passed",
+    "changed_thresholds": "No scientific gate changed; workflow assertion uses 1e-12 tolerance already present in saturator regression"
+  },
+  "epistemic_boundary": {
+    "DERIVED": "classical resolvent norm bound, tightness construction and mathematical moving-frame covariance",
+    "ARTIFACT_VERIFIED": "clean-checkout CPU CI run, exact branch/test contents",
+    "MEASURED": "only self-authored synthetic tests, not measured Munich propagation",
+    "ASSUMED": "tau,rho require external calibration and valid uncertainty coverage when applied to physical data",
+    "RETIRED": "no renewed Bargmann or null-cone performance advantage",
+    "PENDING": "authentic 16-receiver data and independently established channel/noise errors"
+  },
+  "restrictions": "No Work, GPU/HF credits, Sionna regeneration or NVlabs PR82 changes"
+}
