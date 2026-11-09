@@ -1,0 +1,75 @@
+{
+  "A_rank_one_better": {
+    "circular_16psk": [
+      0.025553644361124228,
+      0.05123745979584953
+    ],
+    "maximum_two_stage_moving_frame_difference": 1.7763568394002505e-15,
+    "missing_H_gram": "G=(1/1.1)*diag(1,0.1); H=positive Hermitian sqrt(G)",
+    "qpsk_squared": [
+      0.025794927385913984,
+      0.05806361651783502
+    ],
+    "rank_one": [
+      0.009119063737237185,
+      0.013944601729459187
+    ],
+    "strict_gaps": {
+      "rank_better_than_circular_16psk": 0.011609042631665041,
+      "rank_better_than_qpsk_squared": 0.011850325656454797
+    }
+  },
+  "B_rank_one_worse": {
+    "circular_16psk": [
+      0.025553644361124235,
+      0.05123745979584954
+    ],
+    "maximum_two_stage_moving_frame_difference": 2.6645352591003757e-15,
+    "missing_H_gram": "G=(0.01*I+0.99*u*u_dagger)/1.01, u=(cos(pi/8),sin(pi/8)); H=positive Hermitian sqrt(G)",
+    "qpsk_squared": [
+      0.012951635309351051,
+      0.03125761947248695
+    ],
+    "rank_one": [
+      0.18795830958717896,
+      0.1905435922465868
+    ],
+    "strict_gaps": {
+      "rank_worse_than_circular_16psk": 0.13672084979132942,
+      "rank_worse_than_qpsk_squared": 0.156700690114692
+    }
+  },
+  "aggregate_pairwise_gap_error_budget_max": 7.978845608028656e-8,
+  "comparison_gate": "upper_SER_A+1e-10 < lower_SER_B; strict separation >1e-4; rounding budget below strict gap",
+  "conditional_ledger": {
+    "H": "unknown whether either synthetic completion satisfies the actual Munich RT scene and path solver",
+    "M": "two synthetic 16-slot witnesses; same one printed H0; numerical nonoverlap in both directions",
+    "P": "conditional uniform-mixture SER bound averaging and covariance in moving frames",
+    "R": "16-site SER ranking inferred from one printed H0 and slot-level normalization alone"
+  },
+  "current_known_receiver_H0": "one eight-decimal printed normalized complex channel",
+  "exact_codebooks": [
+    "rank_one",
+    "qpsk_squared",
+    "circular_16psk"
+  ],
+  "frozen_test_ci": "https://github.com/jesusvilela/sionna-rt/actions/runs/42587624459",
+  "gauge_result": "strict rankings and full interval bounds invariant under two successive site-local GL(2,C) receiver changes and global SU(2) input-frame changes when covariance and codebooks are transported",
+  "heading": "Two synthetic completions of fifteen unpublished Sionna Munich channel matrices",
+  "independent_numeric_witness": "60 decimal digit mpmath direct-H 16x15 pairwise-event enumeration, no old Gram code called",
+  "matched_controls": "same H0; same 16 receiver count; same noise; same fixed source codebooks; same power split; same physical input-port definitions; frame transforms move channels, covariance and port projectors",
+  "no_new_geometric_objects": true,
+  "no_new_munich_data": true,
+  "no_nvlabs_modifications": true,
+  "noise_N0": 0.01,
+  "per_site_frobenius_requirement": "all 15 mathematical missing slots ||H||_F=1 and full rank; printed H0 has the source's 8-decimal rounding",
+  "physical_scene_constrained": false,
+  "printed_H0_rounding_assumption": "each of 8 real H0 components rounded to nearest 1e-8",
+  "receiver_weight": "uniform 1/16",
+  "scientific_origin": "MATHEMATICAL COUNTERWORLDS ONLY; not original Munich observations or a physical ray tracing regeneration",
+  "selection_disclosure": "Counterworld coordinates were selected after exploratory inspection of frozen 75-cell grid; verification protocol committed before independent direct-H check.",
+  "source": "jesusvilela/sionna-rt@57435845d3395b2d5e167b0893035e15ffbdaa0d",
+  "tests_passed": "192/192",
+  "total_receiver_count": 16,
+  "unknown_receiver_count": 15
+}
