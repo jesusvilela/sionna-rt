@@ -8,6 +8,7 @@ on:
       - research/receiver-partial-identification-2026-11-09
       - research/gram-uncertainty-certificates-2026-11-09
       - research/adversarial-pairwise-sharpness-2026-11-09
+      - research/fixed-trace-aggregate-sharpness-2026-11-09
   workflow_dispatch:
 
 permissions:
@@ -90,4 +91,17 @@ jobs:
               assert w['moving_frame_max_delta_at_half_budget']<1e-10
           assert v['two_counterworlds']['B_rank_one_worse']['comparisons']['qpsk_squared']['ceiling_is_PD_gate']
           print('Sufficient mathematical Gram-error budgets certified, no physical channel data')
+          PY
+      - name: Verify fixed-trace aggregate union-envelope sharpness
+        run: |
+          python research/experiments/fixed_trace_aggregate_sharpness.py --out /tmp/fixed_trace_aggregate.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path('/tmp/fixed_trace_aggregate.json').read_text())
+          assert x['books']['rank_one']['all_pairwise_gaps_positive']
+          assert x['books']['qpsk_squared']['all_pairwise_gaps_positive']
+          assert x['books']['circular_16psk']['joint_endpoint_attained_for_all_cells']
+          assert abs(x['colored_noise_trace_control']['trace_Hdagger_Sigma_inverse_H']-.625)<1e-12
+          print('Fixed-trace union-envelope distinction: verified on 75 synthetic cells')
           PY
