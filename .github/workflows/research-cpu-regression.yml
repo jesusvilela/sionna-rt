@@ -7,6 +7,7 @@ on:
       - research/printed-high-precision-recheck-2026-11-09
       - research/receiver-partial-identification-2026-11-09
       - research/gram-uncertainty-certificates-2026-11-09
+      - research/adversarial-pairwise-sharpness-2026-11-09
   workflow_dispatch:
 
 permissions:
