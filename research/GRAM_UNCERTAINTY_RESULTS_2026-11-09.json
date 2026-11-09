@@ -1,0 +1,65 @@
+{
+  "A": "unknown future source-matched Gram error radii, not measured",
+  "M": "numeric sufficient robustness radii on two preexisting synthetic worlds",
+  "P": "conditional PSD operator-norm Gaussian PEP envelopes and frame covariance",
+  "R": "new physics, physical Munich uncertainty calibration or performance claims",
+  "all_positive_gate": true,
+  "kill_gate": "if any radius<=1e-6, no practical stability conclusion",
+  "model": "fixed source codebooks; CN(0,N0 Sigma) ML; effective Gram, operator-norm balls",
+  "original_munich_matrices_recovered": 0,
+  "printed_source_rounding_gram_radius": 2.828427037182255e-08,
+  "scope": "synthetic uncertainty certificate, no real Munich data",
+  "two_counterworlds": {
+    "A_rank_one_better": {
+      "comparisons": {
+        "circular_16psk": {
+          "ceiling_is_PD_gate": false,
+          "certified_radius_lower": 0.02902561806601026,
+          "envelope_at_safe_radius": "A",
+          "first_failure_or_PD_upper": 0.029025618066010582,
+          "min_eigenvalue_of_nominal_unknown_sites": 0.09090909090909091,
+          "nominal_strict_margin": 0.011609030657248732,
+          "numerical_bracket_width": 3.226585665316861e-16
+        },
+        "qpsk_squared": {
+          "ceiling_is_PD_gate": false,
+          "certified_radius_lower": 0.020364816713798736,
+          "envelope_at_safe_radius": "A",
+          "first_failure_or_PD_upper": 0.02036481671379906,
+          "min_eigenvalue_of_nominal_unknown_sites": 0.09090909090909091,
+          "nominal_strict_margin": 0.01185030261225511,
+          "numerical_bracket_width": 3.226585665316861e-16
+        }
+      },
+      "moving_frame_max_delta_at_half_budget": 4.440892098500626e-16,
+      "positive_budget_gate": true,
+      "smallest_certified_radius": 0.020364816713798736
+    },
+    "B_rank_one_worse": {
+      "comparisons": {
+        "circular_16psk": {
+          "ceiling_is_PD_gate": true,
+          "certified_radius_lower": 0.009900990099009875,
+          "envelope_at_safe_radius": "B",
+          "first_failure_or_PD_upper": 0.00990099009900991,
+          "min_eigenvalue_of_nominal_unknown_sites": 0.00990099009900991,
+          "nominal_strict_margin": 0.13672084177625857,
+          "numerical_bracket_width": 3.469446951953614e-17
+        },
+        "qpsk_squared": {
+          "ceiling_is_PD_gate": true,
+          "certified_radius_lower": 0.009900990099009875,
+          "envelope_at_safe_radius": "B",
+          "first_failure_or_PD_upper": 0.00990099009900991,
+          "min_eigenvalue_of_nominal_unknown_sites": 0.00990099009900991,
+          "nominal_strict_margin": 0.1567006500331743,
+          "numerical_bracket_width": 3.469446951953614e-17
+        }
+      },
+      "moving_frame_max_delta_at_half_budget": 5.551115123125783e-16,
+      "positive_budget_gate": true,
+      "smallest_certified_radius": 0.009900990099009875
+    }
+  },
+  "unknown_sites": 15
+}
