@@ -6,6 +6,7 @@ on:
       - research/cpu-clean-checkout-regression-2026-11-09
       - research/printed-high-precision-recheck-2026-11-09
       - research/receiver-partial-identification-2026-11-09
+      - research/gram-uncertainty-certificates-2026-11-09
   workflow_dispatch:
 
 permissions:
@@ -73,4 +74,19 @@ jobs:
                   assert c['winner']==expected, (key,comparator,c)
                   assert c['gap']>1e-4
           print('Two 16-slot mathematical completion certificates: 4/4 correct, 0 real Munich channels')
+          PY
+      - name: Verify conservative effective-Gram uncertainty budgets
+        run: |
+          python research/experiments/gram_uncertainty_certificate.py --out /tmp/gram_uncertainty_certificate.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          v=json.loads(Path('/tmp/gram_uncertainty_certificate.json').read_text())
+          assert v['all_positive_gate'] is True
+          assert v['original_munich_matrices_recovered']==0
+          for w in v['two_counterworlds'].values():
+              assert w['smallest_certified_radius']>1e-6
+              assert w['moving_frame_max_delta_at_half_budget']<1e-10
+          assert v['two_counterworlds']['B_rank_one_worse']['comparisons']['qpsk_squared']['ceiling_is_PD_gate']
+          print('Sufficient mathematical Gram-error budgets certified, no physical channel data')
           PY
