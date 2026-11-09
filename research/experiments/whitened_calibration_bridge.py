@@ -213,8 +213,9 @@ def synthetic_audit(cases):
                     expected=U@actual@U.conj().T
                     max_frame_gram_difference=max(max_frame_gram_difference,
                                                   float(np.max(abs(transformed-expected))))
-                    # Intentionally invalid: move receiver channel but not its noise model.
-                    false=_realized_gram(Ht,Sn)
+                    # Intentionally invalid: transform receiver channel while
+                    # retaining the ORIGINAL fixed-frame nominal covariance.
+                    false=_realized_gram(Ht,S0)
                     max_false_metric_change=max(max_false_metric_change,
                                                 float(np.linalg.norm(false-expected,2)))
                     frame_count+=1
