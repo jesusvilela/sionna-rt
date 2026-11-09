@@ -10,6 +10,7 @@ on:
       - research/adversarial-pairwise-sharpness-2026-11-09
       - research/fixed-trace-aggregate-sharpness-2026-11-09
       - research/whitened-calibration-bridge-2026-11-09
+      - research/numerical-frame-domain-audit-2026-11-09
   workflow_dispatch:
 
 permissions:
