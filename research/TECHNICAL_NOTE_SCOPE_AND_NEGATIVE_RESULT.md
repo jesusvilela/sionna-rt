@@ -33,6 +33,8 @@ For any fixed codebook and channel, the Gaussian pairwise preference probability
 
 The intervals certify **circular < rank-one < QPSK-squared** (smaller SER) on the printed channel, and the exact **reverse ranking** on the balanced example. The circular design does **not** have greater mean received energy on the printed H: about 0.49735, versus 0.50000 for rank-one. This falsifies *universal* fixed-null-cone superiority; it says **nothing** about the other 15 unrecovered Munich matrices. The circular baseline was selected **after** seeing the printed matrix, so it is an adversarial diagnostic, not a held-out field result.
 
+**Independent numerical recheck (9 November 2026).** A separate 80-digit, direct-channel computation of all six Gaussian lower/upper values on the one printed H and balanced control agrees with the previous floating-point bounds to within **2.94×10⁻¹⁶**. The two printed strict gaps remain positive even after a worst-case **1.277×10⁻⁶** allowance for eight-decimal-place source rounding; the smaller remaining gap is approximately **0.0162626**. See the [frozen protocol and precise arithmetic audit](./PRINTED_PRECISION_AUDIT_2026-11-09.md). This is **not a formal directed-interval proof** or any additional receiver data.
+
 ## Gram decision rule; 75 synthetic cells
 
 For each receiver Gram `G=H^H H`, define `d_ij^2=(x_i-x_j)^H G (x_i-x_j)` and compute bounds `L_C(G),U_C(G)` above. Declare A better than B **only if** `U_A < L_B`; declare B better **only if** `U_B < L_A`; otherwise abstain. The *full* Gram, including eigenvector orientation relative to the fixed transmit codebooks, matters; its eigenvalue ratio alone cannot decide the outcome.
