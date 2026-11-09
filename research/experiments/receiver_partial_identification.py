@@ -90,7 +90,6 @@ def direct_bounds(H,C,Sigma=None,N0_=N0):
         raise ValueError('noise covariance must be Hermitian positive definite')
     Y=C@H.T
     d=Y[:,None,:]-Y[None,:,:]
-    d2=np.einsum('...i,ij,...j->...',d.conj(),np.linalg.solve(sigma,d.reshape(-1,2).T).T.reshape(d.shape)*0+sigma*0 if False else np.eye(2),d) if False else None
     # Compute the Mahalanobis quadratic on all 256 ordered differences.
     solved=np.linalg.solve(sigma,d.reshape(-1,2).T).T.reshape(d.shape)
     d2=np.einsum('...i,...i->...',d.conj(),solved).real
