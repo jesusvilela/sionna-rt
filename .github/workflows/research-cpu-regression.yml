@@ -5,6 +5,7 @@ on:
     branches:
       - research/cpu-clean-checkout-regression-2026-11-09
       - research/printed-high-precision-recheck-2026-11-09
+      - research/receiver-partial-identification-2026-11-09
   workflow_dispatch:
 
 permissions:
@@ -56,4 +57,20 @@ jobs:
           assert x['precision_decimal_digits']==80
           assert len(x['comparisons'])==4
           print('Printed precision gate: 4/4, single printed H plus balanced negative control')
+          PY
+      - name: Verify two synthetic aggregate counterworld certificates
+        run: |
+          python research/experiments/receiver_partial_identification.py --out /tmp/partial_identification.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path('/tmp/partial_identification.json').read_text())
+          assert x['real_original_munich_matrices_recovered']==0
+          assert x['not_independently_verified_munich_data']
+          for key,w in x['worlds'].items():
+              for comparator,c in w['comparisons'].items():
+                  expected='rank_one' if key.startswith('A_') else comparator
+                  assert c['winner']==expected, (key,comparator,c)
+                  assert c['gap']>1e-4
+          print('Two 16-slot mathematical completion certificates: 4/4 correct, 0 real Munich channels')
           PY
