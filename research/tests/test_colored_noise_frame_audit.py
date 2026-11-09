@@ -7,6 +7,7 @@ from __future__ import annotations
 import hashlib
 import json
 import sys
+import tempfile
 from pathlib import Path
 import unittest
 
@@ -32,10 +33,24 @@ def direct_score_whitened(y,H,C,S):
 class ColoredNoiseAuditTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.data=old.load_source(SOURCE)
+        cls.fixture_dir=None
+        cls.source_path=SOURCE
+        if not SOURCE.is_file():
+            # The 75-cell JSON is intentionally not checked in. Reproduce
+            # it from the frozen source, then validate its exact SHA-256.
+            cls.fixture_dir=tempfile.TemporaryDirectory()
+            cls.source_path=Path(cls.fixture_dir.name)/'gram_sweep_2026-11-04.json'
+            from gram_decision_sweep import main as generate_source
+            generate_source(['--out',str(cls.source_path)])
+        cls.data=old.load_source(cls.source_path)
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.fixture_dir is not None:
+            cls.fixture_dir.cleanup()
 
     def test_source_sha_and_frozen_grid(self):
-        self.assertEqual(hashlib.sha256(SOURCE.read_bytes()).hexdigest(),a.SOURCE_SHA256)
+        self.assertEqual(hashlib.sha256(self.source_path.read_bytes()).hexdigest(),a.SOURCE_SHA256)
         self.assertEqual(self.data['n_cases'],75)
         self.assertEqual(len(self.data['cases']),75)
 
