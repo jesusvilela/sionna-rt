@@ -12,7 +12,7 @@ from mpmath import mp
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'experiments'))
 import receiver_partial_identification as p
 
-mp.dps=60
+# Do not alter mpmath's global precision: existing 80-digit tests share this process.
 
 
 def independent_mp_channels():
@@ -88,15 +88,18 @@ class ReceiverPartialIdentificationTests(unittest.TestCase):
             self.assertGreater(world['min_rounding_adjusted_gap'],1e-4)
 
     def test_independent_60_digit_direct_channel_bounds_for_both_worlds(self):
-        ref=independent_mp_channels();books=independent_mp_books()
-        for name,channels in p.worlds().items():
-            for key,C in p.source_codebooks().items():
-                lo0,up0=independent_mp_bounds(ref['H0'],books[key])
-                los,ups=independent_mp_bounds(ref[name],books[key])
-                expected=((lo0+15*los)/16,(up0+15*ups)/16)
-                actual=p.mixture_bounds(channels)[key]
-                self.assertAlmostEqual(actual['lower'],expected[0],places=11)
-                self.assertAlmostEqual(actual['upper'],expected[1],places=11)
+        old_precision=mp.dps
+        with mp.workdps(60):
+            ref=independent_mp_channels();books=independent_mp_books()
+            for name,channels in p.worlds().items():
+                for key,C in p.source_codebooks().items():
+                    lo0,up0=independent_mp_bounds(ref['H0'],books[key])
+                    los,ups=independent_mp_bounds(ref[name],books[key])
+                    expected=((lo0+15*los)/16,(up0+15*ups)/16)
+                    actual=p.mixture_bounds(channels)[key]
+                    self.assertAlmostEqual(actual['lower'],expected[0],places=11)
+                    self.assertAlmostEqual(actual['upper'],expected[1],places=11)
+        self.assertEqual(mp.dps,old_precision)
 
     def test_original_h0_interval_matches_archived_high_precision(self):
         expected={
@@ -141,15 +144,20 @@ class ReceiverPartialIdentificationTests(unittest.TestCase):
 
     def test_witness_specific_number_of_unknown_sites_needed_for_flip(self):
         books=p.source_codebooks()
-        reference=[p.PRINTED]*16
+        # Preserve the actual rounded printed H0 only at site 0. The
+        # 15 counterfactual slots must satisfy *exact* Frobenius normalization.
+        spare=p.PRINTED / np.linalg.norm(p.PRINTED,'fro')
+        reference=[p.PRINTED]+[spare]*15
         self.assertEqual(p.comparisons(p.mixture_bounds(reference,books))['qpsk_squared']['winner'],'rank_one')
         self.assertEqual(p.comparisons(p.mixture_bounds(reference,books))['circular_16psk']['winner'],'circular_16psk')
         good=p.worlds()['A_rank_one_better'][1]
         bad=p.worlds()['B_rank_one_worse'][1]
-        a_at13=p.comparisons(p.mixture_bounds([p.PRINTED]*(16-13)+[good]*13,books))
-        a_at14=p.comparisons(p.mixture_bounds([p.PRINTED]*(16-14)+[good]*14,books))
-        b_at10=p.comparisons(p.mixture_bounds([p.PRINTED]*(16-10)+[bad]*10,books))
-        b_at11=p.comparisons(p.mixture_bounds([p.PRINTED]*(16-11)+[bad]*11,books))
+        def with_k_replacements(k,H):
+            return [p.PRINTED] + [spare]*(15-k) + [H]*k
+        a_at13=p.comparisons(p.mixture_bounds(with_k_replacements(13,good),books))
+        a_at14=p.comparisons(p.mixture_bounds(with_k_replacements(14,good),books))
+        b_at10=p.comparisons(p.mixture_bounds(with_k_replacements(10,bad),books))
+        b_at11=p.comparisons(p.mixture_bounds(with_k_replacements(11,bad),books))
         self.assertNotEqual(a_at13['circular_16psk']['winner'],'rank_one')
         self.assertEqual(a_at14['circular_16psk']['winner'],'rank_one')
         self.assertNotEqual(b_at10['qpsk_squared']['winner'],'qpsk_squared')
