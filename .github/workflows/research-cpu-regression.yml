@@ -1,0 +1,46 @@
+name: Research CPU regression (no Sionna or GPU)
+
+on:
+  push:
+    branches:
+      - research/cpu-clean-checkout-regression-2026-11-09
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cpu-unittest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      PYTHONHASHSEED: '0'
+    steps:
+      - name: Checkout fork research branch
+        uses: actions/checkout@v4
+      - name: Set up CPU Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install only CPU numerical dependencies
+        run: |
+          python -m pip install --no-cache-dir --only-binary=:all: \
+            numpy==2.3.5 scipy==1.17.0 scikit-learn==1.8.0
+      - name: Independently regenerate and verify the frozen 75-cell input
+        run: |
+          python research/experiments/gram_decision_sweep.py --out /tmp/frozen_sionna_gram.json
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          expected = '16ad7ca1eda73d9c6a73776555be2f93333d248ad44d11a32ac9be3b05d2f4c6'
+          actual = hashlib.sha256(Path('/tmp/frozen_sionna_gram.json').read_bytes()).hexdigest()
+          print('Frozen synthetic Gram SHA256:', actual)
+          assert actual == expected, (expected, actual)
+          PY
+      - name: Run entire research unittest suite without an archived fixture
+        run: |
+          test ! -e research/experiments/gram_sweep_2026-11-04.json
+          python -m unittest discover -s research/tests -p 'test_*.py' -v
