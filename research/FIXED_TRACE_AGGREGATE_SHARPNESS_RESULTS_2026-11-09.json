@@ -1,0 +1,57 @@
+{
+  "PR82_untouched": true,
+  "circular_single_beam": {
+    "all_75_cells_joint_upper_and_lower_pep_endpoint_attainment": true
+  },
+  "colored_noise_trace_counterexample": {
+    "Sigma": "diag(1,4)",
+    "frobenius_norm_H_squared": 1,
+    "trace_H_dagger_Sigma_inverse_H": 0.625
+  },
+  "evidence": {
+    "A": "Trace preservation for an effective colored-noise Gram must be independently justified; Frobenius normalization of H alone does not imply it.",
+    "M": "75 synthetic Gram cells, 19,200 random traceless perturbations, direct-H evaluation, 60-digit minimum-gap check, two-stage moving-frame checks.",
+    "P": "Two-line eigenvector inequality and conditional Gaussian monotonicity.",
+    "R": "No physical Munich channel inference, no exact ML SER extremum, no new geometry or performance advantage."
+  },
+  "initial_failed_test": {
+    "actual_60_digit_minimum": "5.068896702993879148668344497563169532845e-26",
+    "cause": "The first test draft imposed an unregistered >1e-12 lower-gap requirement.",
+    "correction": "Removed the unregistered practical threshold; the preregistered criterion was strict positivity verified at high precision.",
+    "scientific_claim_changed": "No. The result is a strict mathematical gap, not a practically useful uniform tightening."
+  },
+  "minimum_sampled_actual_union_gap": 1.580289436560868e-9,
+  "original_munich_channels_recovered": 0,
+  "pre_execution_protocol": "research/FIXED_TRACE_AGGREGATE_SHARPNESS_PREREG.md",
+  "scope": "fixed-trace Hermitian effective-Gram uncertainty; 75 synthetic cells; no physical Munich observations",
+  "source_sha256": "16ad7ca1eda73d9c6a73776555be2f93333d248ad44d11a32ac9be3b05d2f4c6",
+  "test_suite": {
+    "github_actions_run": "https://github.com/jesusvilela/sionna-rt/actions/runs/42654843602",
+    "passed": 214,
+    "total_cpu_tests": 214
+  },
+  "traceless_extremizer_random_tests": 19200,
+  "two_line_theorem": {
+    "coherence": {
+      "circular_16psk": 1,
+      "qpsk_squared": 0,
+      "rank_one": 0.3826834323650898
+    },
+    "interpretation": "For every fixed-trace E, the separable union-upper endpoint is strictly unattainable for rank_one and qpsk_squared; circular_16psk jointly attains all pairwise endpoints. The uniform strictness bound can be numerically negligible.",
+    "maximum_uniform_union_gap_lower_bound_over_75_cells": {
+      "circular_16psk": 0,
+      "qpsk_squared": 9.413849827893843e-10,
+      "rank_one": 7.867180403143126e-8
+    },
+    "minimum_rank_one_gap_recomputed_at_60_decimal_digits": "5.068896702993879148668344497563169532845e-26",
+    "minimum_uniform_union_gap_lower_bound_over_75_cells": {
+      "circular_16psk": 0,
+      "qpsk_squared": 3.192438264027971e-15,
+      "rank_one": 5.0688967029922675e-26
+    }
+  },
+  "unrestricted_hermitian_ball": {
+    "grid_book_cases": 225,
+    "joint_upper_and_lower_gaussian_bound_functionals_attained_by_plus_minus_epsilon_I": true
+  }
+}
