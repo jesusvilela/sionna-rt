@@ -209,7 +209,8 @@ class GramTests(TestCase):
             meta_path=archive.with_suffix('.manifest.json')
             meta=json.loads(meta_path.read_text());meta['archive_sha256']='deadbeef'
             meta_path.write_text(json.dumps(meta))
-            with self.assertRaisesRegex(ValueError,'SHA256'):g.evaluate_receiver_npz(archive)
+            with self.assertRaisesRegex(ValueError,'SHA256'):
+                g.evaluate_receiver_npz(archive,allow_synthetic_fixture=True)
 
     def test_main_records_no_real_receiver_results_without_input(self):
         with tempfile.TemporaryDirectory() as tmp:
