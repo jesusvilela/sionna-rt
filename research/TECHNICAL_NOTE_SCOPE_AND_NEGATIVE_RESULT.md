@@ -144,6 +144,18 @@ On the frozen **75-cell synthetic grid** at \(\varepsilon=\min(10^{-3},\lambda_{
 
 **Research boundary:** the error budgets are assumptions about not-yet-measured noise-weighted Grams and are **not observed calibration precision or a specification verified in Munich**. This is standard matrix perturbation and coherent Gaussian detection applied to an existing conditional result; it adds neither data nor geometric novelty. The retired geometric advantage claims stay retired.
 
+## From independently calibrated errors to a Gram-radius certificate
+
+An operational missing bridge is how to convert **external instrument-error guarantees** into the already defined effective-Gram uncertainty \(\varepsilon_G\). Given \(\widehat H,\widehat\Sigma\succ0\), let \(LL^\dagger=\widehat\Sigma\), \(Z=L^{-1}\widehat H\), \(a=\|Z\|_{\mathrm{op}}\), and **assume independently justified** \(\|L^{-1}(H-\widehat H)\|_{\mathrm{op}}\le\tau\), \(\|L^{-1}(\Sigma-\widehat\Sigma)L^{-\dagger}\|_{\mathrm{op}}\le\rho<1\). The classical inverse-resolvent bound gives
+
+\[
+\varepsilon_G=\frac{a^2\rho+2a\tau+\tau^2}{1-\rho}.
+\]
+
+The triple \((a,\tau,\rho)\), and hence this bound, is invariant under a simultaneous \(GL(2,\mathbb C)\) receiver-coordinate change and \(U(2)\) transmitter-frame change when **both true and estimated** channel/noise objects are transported; an unwhitened absolute error need not be. The existing conditional SER certificate may use \(\varepsilon_G\) only if \(\varepsilon_G<\lambda_{\min}(\widehat G)\); otherwise it **abstains**. The bound is mathematically tight over general independent operator-norm balls: one aligned \(2\times2\) diagonal witness attains \(\varepsilon_G=0.55\).
+
+A [frozen protocol](./WHITENED_CALIBRATION_BRIDGE_PREREG_2026-11-09.md), [CPU implementation](./experiments/whitened_calibration_bridge.py), [nine adversarial tests](./tests/test_whitened_calibration_bridge.py) and [result ledger](./WHITENED_CALIBRATION_BRIDGE_RESULTS_2026-11-09.json) document **600 synthetic source/noise perturbations, 48 composed frame checks and 223 passing clean-checkout CPU tests** ([successful run](https://github.com/jesusvilela/sionna-rt/actions/runs/42691468179)). Assuming *hypothetically* \(\tau=\rho=0.001\), the two prior synthetic counterworlds yield \(\varepsilon_G=0.00282\) and \(0.00298\), below their earlier sufficient thresholds. **Neither bound is an observed calibration accuracy.** This interface does not authenticate a receiver, justify a probabilistic confidence level, or recover any of the 16 missing Munich matrices. No earlier performance/novelty claim changes.
+
 ## Evidence boundary and smallest next action
 
 **Proved under model:** Gaussian pairwise bounds, printed-channel conditional ordering, white-noise Gram sufficiency and covariance-aware frame equivalence; **measured in synthetic data:** 75-case classifications, a frozen held-out ablation and a covariance-transport regression; **known prior mathematics:** Pancharatnam/Bargmann phases; **open:** actual 16 Munich receivers, external propagation generalization and fair optimized-baseline testing; **retired:** determinant's unique causal performance role, and a demonstrated Bargmann engineering advantage for the synthetic per-site decision.
