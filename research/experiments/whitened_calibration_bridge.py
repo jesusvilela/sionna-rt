@@ -18,6 +18,28 @@ import numpy as np
 
 
 COND_LIMIT = 1e10
+
+
+class NumericalFrameConditionError(ValueError):
+    """This RAW receiver coordinate frame exceeds the CPU safety domain.
+
+    The same physical channel/noise model may admit a well-conditioned
+    representation. Do not confuse this failure with a spectral-error
+    certificate's positive-definiteness abstention or missing provenance.
+    """
+    reason_code = "numerical_frame_domain_rejection"
+
+    def __init__(self, observed_condition, condition_limit=COND_LIMIT):
+        self.observed_condition = float(observed_condition)
+        self.condition_limit = float(condition_limit)
+        super().__init__(
+            f"nominal covariance condition {self.observed_condition:.6g} "
+            f"exceeds raw-frame CPU safety limit {self.condition_limit:.6g}; "
+            "re-express both channel and covariance in a validated "
+            "well-conditioned receiver frame with transported error attestations"
+        )
+
+
 SOURCE_SHA256 = "16ad7ca1eda73d9c6a73776555be2f93333d248ad44d11a32ac9be3b05d2f4c6"
 DEMO_BUDGETS = ((0., 0.), (1e-4, 1e-3), (1e-3, 1e-2), (5e-3, 0.1))
 
@@ -37,7 +59,7 @@ def _nominal_whitened(Hhat, Sigmahat):
     if w[0] <= 0:
         raise ValueError("nominal covariance must be strictly positive definite")
     if w[-1] / w[0] > COND_LIMIT:
-        raise ValueError("nominal covariance too ill-conditioned for this CPU gate")
+        raise NumericalFrameConditionError(w[-1] / w[0])
     L = np.linalg.cholesky(S)
     Z = np.linalg.solve(L, H)
     G = Z.conj().T @ Z
@@ -89,7 +111,10 @@ def gram_radius_from_calibration(Hhat, Sigmahat, tau, rho):
         "ready_for_existing_ser_certificate":ready,
         "status":"conditionally_certifiable" if ready else "abstain_positive_definiteness_gate",
         "evidence_status":"assumptions_only_no_measured_calibration",
-        "receiver_frame":"arbitrary GL(2,C) with full covariance transport",
+        "receiver_frame":"mathematical GL(2,C) covariance with full transport",
+        "numerical_frame_acceptance":"only finite raw covariance representations with condition <= 1e10",
+        "numerical_frame_domain_result":"accepted_raw_representation",
+        "numerical_frame_rejection_reason":"NumericalFrameConditionError, not physical SER abstention",
         "noise_model":"CN(0, N0*Sigma) with independent fixed N0 > 0",
         "source":"Neumann inverse perturbation and spectral submultiplicativity",
     }
