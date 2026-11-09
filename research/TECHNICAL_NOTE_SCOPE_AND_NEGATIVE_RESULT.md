@@ -91,6 +91,14 @@ The [negative-result ledger](./ABLATION_OUTCOME_2026-11-05.json) preserves sourc
 
 **Data-ingestion correction (5 November).** A self-authored NPZ plus matching SHA256 is not independently authenticated Munich propagation evidence. The [provenance gate](./MUNICH_PROVENANCE_AUDIT.md) now rejects synthetic fixtures and unverified imports by default; CPU regenerated channels remain explicitly labeled *candidates*. There are still **0/16 authenticated Munich matrices**. This changes only the evidence interface, not any constellation bound or negative-result conclusion.
 
+## Clean-checkout CPU reproducibility checkpoint (9 November 2026)
+
+The [fork-only CPU regression workflow](../.github/workflows/research-cpu-regression.yml) now checks **all 175 research unittests across 16 files**, with Python 3.13 and pinned NumPy/SciPy/scikit-learn packages; **no Sionna, GPU, HF or external propagation samples**. In a clean checkout, it first regenerates the **75 synthetic Gram cells** and checks the archived SHA-256 `16ad7ca1eda73d9c6a73776555be2f93333d248ad44d11a32ac9be3b05d2f4c6` independently of the test fixtures. It then executes the entire test suite **without** committing or pre-installing that JSON.
+
+The [successful CI run of 9 November 2026](https://github.com/jesusvilela/sionna-rt/actions/runs/42577583312) reports **175/175 passing**. A first clean-checkout run revealed two **test-harness integration** defects: a colored-noise test expected an untracked JSON fixture, and a provenance test expected a checksum error without enabling its explicit synthetic-fixture diagnostic mode. Both tests were corrected; the numerical models, original notebook, PR #82, fixed codebooks and research claims were unchanged.
+
+**Evidence ceiling:** this confirms reproducibility of the *self-authored CPU research tests* against the frozen synthetic data. It does not independently verify the science, authenticate Munich propagation, remove the 0/16 receiver-data gap, or revive the retired geometric-performance claims.
+
 ## Evidence boundary and smallest next action
 
 **Proved under model:** Gaussian pairwise bounds, printed-channel conditional ordering, white-noise Gram sufficiency and covariance-aware frame equivalence; **measured in synthetic data:** 75-case classifications, a frozen held-out ablation and a covariance-transport regression; **known prior mathematics:** Pancharatnam/Bargmann phases; **open:** actual 16 Munich receivers, external propagation generalization and fair optimized-baseline testing; **retired:** determinant's unique causal performance role, and a demonstrated Bargmann engineering advantage for the synthetic per-site decision.
