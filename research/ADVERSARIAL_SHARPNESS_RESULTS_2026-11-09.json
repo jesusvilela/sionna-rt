@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-09",
+  "scope": "Adversarial sharpness of existing fixed-codebook Gaussian PEP envelopes; no physical channel data or new geometry",
+  "frozen_source_sha256": "16ad7ca1eda73d9c6a73776555be2f93333d248ad44d11a32ac9be3b05d2f4c6",
+  "prereg": "research/ADVERSARIAL_PAIRWISE_SHARPNESS_PREREG.md",
+  "original_certificate": "research/experiments/gram_uncertainty_certificate.py",
+  "pre_registered_traceless": {
+    "grid_cases": 75,
+    "fixed_codebooks": 3,
+    "distinct_pairs_per_book": 4,
+    "signed_extremizers": 1800,
+    "epsilon_rule": "min(1e-3,lambda_min(G)/4)",
+    "maximum_absolute_q_endpoint_error": 3.774758283725532e-15,
+    "maximum_absolute_pep_endpoint_error": 4.440892098500626e-16,
+    "maximum_absolute_trace_error": 5.421014434571945e-19,
+    "maximum_absolute_operator_norm_error": 4.336808689942018e-19,
+    "all_gates_passed": true
+  },
+  "moving_frame": {
+    "cases": [
+      0,
+      18,
+      37,
+      55,
+      74
+    ],
+    "signed_pair_cases_across_two_frames": 60,
+    "maximum_absolute_whitened_q_error": 6.661338147750939e-16,
+    "maximum_absolute_pep_error": 1.1102230246251565e-16,
+    "maximum_absolute_physical_port_error": 2.220446049250313e-16,
+    "deliberate_incorrect_fixed_codeword_distance_change": 0.4708923210553275
+  },
+  "posthoc_analytic_correction": {
+    "status": "discovered after frozen traceless test; not presented as a preregistered discovery",
+    "unrestricted_ball": "E=+epsilon I or E=-epsilon I jointly saturates all PEP endpoints. The propagated Gaussian error lower L and union upper U functionals have attained extrema over the unrestricted Hermitian op-norm ball.",
+    "globally_verified_grid_book_combinations": 225,
+    "maximum_absolute_aggregate_Gaussian_surrogate_bound_error": 5.828670879282072e-16,
+    "trace_preserving_circular_book": "Because Ck=z_k b, E=+/-epsilon(2bb^H-I) jointly saturates all pairwise PEP endpoints while trace stays fixed.",
+    "maximum_absolute_circular_PEP_error_across_grid": 1.0061396160665481e-16,
+    "noncollinearity_cos2_of_frozen_pairs": {
+      "rank_one": 0.7499999999999998,
+      "qpsk_squared": 0.6666666666666667,
+      "circular_16psk": 1.0000000000000002
+    },
+    "limit": "The exact extrema concern PEP-derived L and U functionals, not exact coherent ML SER. Fixed-trace multi-beam Gaussian-bound extrema are not thereby proven attained."
+  },
+  "evidence": "Algebra P conditional on strictly positive definite Gram balls; local CPU numerical M; AI-authored code and tests; no independent external reproduction",
+  "old_reported_synthetic_thresholds_modified": false,
+  "authenticated_original_Munich_matrices": 0,
+  "NVlabs_PR82_unchanged": true
+}
