@@ -110,11 +110,26 @@ The [negative-result ledger](./ABLATION_OUTCOME_2026-11-05.json) preserves sourc
 
 ## Clean-checkout CPU reproducibility checkpoint (9 November 2026)
 
-The [fork-only CPU regression workflow](../.github/workflows/research-cpu-regression.yml) now checks **all 175 research unittests across 16 files**, with Python 3.13 and pinned NumPy/SciPy/scikit-learn packages; **no Sionna, GPU, HF or external propagation samples**. In a clean checkout, it first regenerates the **75 synthetic Gram cells** and checks the archived SHA-256 `16ad7ca1eda73d9c6a73776555be2f93333d248ad44d11a32ac9be3b05d2f4c6` independently of the test fixtures. It then executes the entire test suite **without** committing or pre-installing that JSON.
+At its initial clean-checkout checkpoint, the [fork-only CPU regression workflow](../.github/workflows/research-cpu-regression.yml) checked **175 research unittests across 16 files**, with Python 3.13 and pinned NumPy/SciPy/scikit-learn packages; **no Sionna, GPU, HF or external propagation samples**. In a clean checkout, it first regenerates the **75 synthetic Gram cells** and checks the archived SHA-256 `16ad7ca1eda73d9c6a73776555be2f93333d248ad44d11a32ac9be3b05d2f4c6` independently of the test fixtures. It then executes the entire test suite **without** committing or pre-installing that JSON.
 
 The [successful CI run of 9 November 2026](https://github.com/jesusvilela/sionna-rt/actions/runs/42577583312) reports **175/175 passing**. A first clean-checkout run revealed two **test-harness integration** defects: a colored-noise test expected an untracked JSON fixture, and a provenance test expected a checksum error without enabling its explicit synthetic-fixture diagnostic mode. Both tests were corrected; the numerical models, original notebook, PR #82, fixed codebooks and research claims were unchanged.
 
 **Evidence ceiling:** this confirms reproducibility of the *self-authored CPU research tests* against the frozen synthetic data. It does not independently verify the science, authenticate Munich propagation, remove the 0/16 receiver-data gap, or revive the retired geometric-performance claims.
+
+## Error-aware receiver acceptance test (9 November 2026)
+
+A future channel acquisition must provide **both** a frame-aligned effective Gram estimate \(\widehat G_v=H_v^\dagger\Sigma_v^{-1}H_v\) and an independently supported **spectral-norm error budget** \(\|G_v-\widehat G_v\|_{\mathrm{op}}\le\varepsilon_v\). For every codeword difference \(\Delta\), its received squared distance differs from the estimate by at most \(\varepsilon_v\|\Delta\|^2\). Applying the monotone Gaussian tail to those two distance endpoints, then averaging the *maximal pairwise lower* and *all-pairs upper* probabilities, produces a **conservative, simultaneous SER certificate** for all admissible channels. The current implementation requires \(\varepsilon_v<\lambda_{\min}(\widehat G_v)\) to exclude receiver-codeword collisions without an explicit tie policy. Under moving frames, the input Gram, codebook and physical ports transform together; nonunitary receiver changes additionally transport the noise covariance.
+
+In the two existing, wholly synthetic **15-missing-slot** counterworlds (with the one printed H0 fixed and its eight-decimal rounding budget included), the sufficient uniform error thresholds for the unknown slots are:
+
+| Counterworld | Rank-one vs QPSK² | Rank-one vs circular 16-PSK | Interpretation |
+|---|---:|---:|---|
+| A, rank-one better | \(\varepsilon<0.020365\) | \(\varepsilon<0.029026\) | Conservative Gaussian-bound separation expires |
+| B, rank-one worse | \(\varepsilon<0.009901\) | \(\varepsilon<0.009901\) | **Positive-definiteness gate**, not observed ranking failure |
+
+On the previously frozen 75-Gram grid, the comparisons at \(\varepsilon=0,10^{-4},10^{-3}\) yielded the **same strict/abstention counts** for the two fixed competing designs. A further 225 seeded positive-definite perturbation trials obeyed all predicted event and SER envelopes. These are *software regression controls*, not independent source-channel measurements. Source: [pre-execution protocol](./GRAM_UNCERTAINTY_PREREG_2026-11-09.md), [executable CPU test](./experiments/gram_uncertainty_certificate.py), [adversarial regression suite](./tests/test_gram_uncertainty_certificate.py), and [numerical ledger](./GRAM_UNCERTAINTY_RESULTS_2026-11-09.json).
+
+**Research boundary:** the error budgets are assumptions about not-yet-measured noise-weighted Grams and are **not observed calibration precision or a specification verified in Munich**. This is standard matrix perturbation and coherent Gaussian detection applied to an existing conditional result; it adds neither data nor geometric novelty. The retired geometric advantage claims stay retired.
 
 ## Evidence boundary and smallest next action
 
