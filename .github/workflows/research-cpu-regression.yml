@@ -118,7 +118,8 @@ jobs:
           assert r['synthetic_adversarial']['frame_checks']==48
           assert r['synthetic_adversarial']['max_bound_excess']<=1e-11
           assert r['synthetic_adversarial']['max_frame_budget_parameter_difference']<2e-10
-          assert r['saturation']['derived_error_bound']==.55
+          assert abs(r['saturation']['derived_error_bound']-.55)<1e-12
+          assert abs(r['saturation']['true_gram_error']-.55)<1e-12
           assert all(w['within_prior_required_bound'] for w in r['illustrative_not_measured'].values())
           print('Whitened source-error bridge: synthetic 600/600, 48 frames, no measured Munich channels')
           PY
