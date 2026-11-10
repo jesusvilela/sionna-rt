@@ -18,6 +18,7 @@ import numpy as np
 
 
 COND_LIMIT = 1e10
+HERMITIAN_RELATIVE_TOL = 1e-12
 
 
 class NumericalFrameConditionError(ValueError):
@@ -52,9 +53,21 @@ def _nominal_whitened(Hhat, Sigmahat):
         raise ValueError("finite complex 2x2 Hhat and Sigmahat required")
     if not np.isfinite(H).all() or not np.isfinite(S).all():
         raise ValueError("nominal channel and covariance must be finite")
-    if np.max(np.abs(S - S.conj().T)) > 1e-12:
-        raise ValueError("nominal covariance must be Hermitian")
-    S = (S + S.conj().T) / 2
+    # Covariance validity must not depend on arbitrary *scalar* receiver
+    # coordinate gain. An absolute skew tolerance falsely accepted seriously
+    # non-Hermitian covariances when their entries were tiny.
+    scale = float(np.max(np.abs(S)))
+    if not np.isfinite(scale) or scale == 0:
+        raise ValueError("nominal covariance must be finite and nonzero")
+    scaled = S / scale
+    relative_skew = float(np.max(np.abs(scaled - scaled.conj().T)))
+    if not np.isfinite(relative_skew) or relative_skew > HERMITIAN_RELATIVE_TOL:
+        raise ValueError(
+            f"nominal covariance must be Hermitian: relative skew "
+            f"{relative_skew:.6g} exceeds {HERMITIAN_RELATIVE_TOL:g}"
+        )
+    # Symmetrize only machine-level skew; halve first to avoid S+S^H overflow.
+    S = (S / 2) + (S.conj().T / 2)
     w = np.linalg.eigvalsh(S)
     if w[0] <= 0:
         raise ValueError("nominal covariance must be strictly positive definite")
