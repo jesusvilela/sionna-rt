@@ -59,26 +59,50 @@ def _nominal_whitened(Hhat, Sigmahat):
     scale = float(np.max(np.abs(S)))
     if not np.isfinite(scale) or scale == 0:
         raise ValueError("nominal covariance must be finite and nonzero")
-    scaled = S / scale
+    # Complex division by a tiny positive real can spuriously overflow inside
+    # NumPy even when every component ratio is bounded by one. Scale the real
+    # and imaginary parts separately, preserving subnormal SPD inputs.
+    scaled = np.empty_like(S)
+    with np.errstate(over="ignore", divide="ignore", invalid="ignore"):
+        np.divide(S.real, scale, out=scaled.real)
+        np.divide(S.imag, scale, out=scaled.imag)
+    if not np.isfinite(scaled).all():
+        raise ValueError("nominal covariance scaling is not numerically finite")
     relative_skew = float(np.max(np.abs(scaled - scaled.conj().T)))
     if not np.isfinite(relative_skew) or relative_skew > HERMITIAN_RELATIVE_TOL:
         raise ValueError(
             f"nominal covariance must be Hermitian: relative skew "
             f"{relative_skew:.6g} exceeds {HERMITIAN_RELATIVE_TOL:g}"
         )
-    # Symmetrize only machine-level skew; halve first to avoid S+S^H overflow.
-    S = (S / 2) + (S.conj().T / 2)
-    w = np.linalg.eigvalsh(S)
+    # Symmetrize at unit scale before eigendecomposition: on subnormal inputs,
+    # halving the unscaled entries can erase material relative information.
+    scaled = (scaled / 2) + (scaled.conj().T / 2)
+    w = np.linalg.eigvalsh(scaled)
     if w[0] <= 0:
         raise ValueError("nominal covariance must be strictly positive definite")
-    if w[-1] / w[0] > COND_LIMIT:
-        raise NumericalFrameConditionError(w[-1] / w[0])
-    L = np.linalg.cholesky(S)
-    Z = np.linalg.solve(L, H)
+    condition = float(w[-1] / w[0])
+    if condition > COND_LIMIT:
+        raise NumericalFrameConditionError(condition)
+    # chol(S) = sqrt(scale)*chol(S/scale) and the effective Gram depends only
+    # on Z = chol(S/scale)^-1 * (H/sqrt(scale)).
+    L_unit = np.linalg.cholesky(scaled)
+    sqrt_scale = float(np.sqrt(scale))
+    H_unit = np.empty_like(H)
+    with np.errstate(over="ignore", divide="ignore", invalid="ignore"):
+        np.divide(H.real, sqrt_scale, out=H_unit.real)
+        np.divide(H.imag, sqrt_scale, out=H_unit.imag)
+    if not np.isfinite(H_unit).all():
+        raise ValueError("nominal whitening exceeds finite complex128 range")
+    Z = np.linalg.solve(L_unit, H_unit)
+    if not np.isfinite(Z).all():
+        raise ValueError("nominal whitening is not numerically finite")
     G = Z.conj().T @ Z
     G = (G + G.conj().T) / 2
+    if not np.isfinite(G).all():
+        raise ValueError("nominal Gram is not numerically finite")
     eig = np.linalg.eigvalsh(G)
-    return Z, L, G, float(eig[0]), float(w[-1] / w[0])
+    L = sqrt_scale * L_unit
+    return Z, L, G, float(eig[0]), condition
 
 
 def _nonnegative_finite(value, name):
