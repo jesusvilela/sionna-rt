@@ -12,6 +12,7 @@ on:
       - research/whitened-calibration-bridge-2026-11-09
       - research/numerical-frame-domain-audit-2026-11-09
       - research/covariance-scale-hermiticity-2026-11-10
+      - research/subnormal-covariance-whitening-2026-11-10
   workflow_dispatch:
 
 permissions:
