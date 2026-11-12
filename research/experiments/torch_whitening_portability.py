@@ -112,7 +112,7 @@ def compile_probe():
     for dtype in (torch.float32, torch.float64, torch.complex64, torch.complex128):
         rtype = torch.float32 if dtype in (torch.float32, torch.complex64) else torch.float64
         a = torch.randn(8, 4, 4, dtype=rtype)
-        if dtype.is_complex():
+        if dtype.is_complex:
             a = torch.complex(a, torch.randn(8, 4, 4, dtype=rtype))
         a = a.to(dtype)
         a = a @ a.mH + .4 * torch.eye(4, dtype=dtype)
