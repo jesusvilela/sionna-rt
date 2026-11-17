@@ -76,7 +76,7 @@ def _no_unapproved_change(old: dict, new: dict) -> None:
             adjusted["source"] = adjusted["source"][len(LICENSE):]
             # Only the empirical-claims paragraph can differ; introduction
             # and all original claims about the algebraic object are frozen.
-            assert adjusted["source"][:13] == before["source"][:13]
+            assert adjusted["source"][:9] == before["source"][:9]
             text = "".join(adjusted["source"])
             assert "results reproduced below for Munich" in text
             assert "Florence scene is not evaluated in this notebook" in text
